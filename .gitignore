@@ -7,6 +7,11 @@ dist/
 out/
 build/
 
+# TypeScript build info
+tsconfig.tsbuildinfo
+next-env.d.ts
+node.core
+
 # IDE
 .vscode/
 .idea/
