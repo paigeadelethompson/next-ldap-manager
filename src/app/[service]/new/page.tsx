@@ -3,9 +3,14 @@
 import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { UserForm } from '@/components/services/openldap/UserForm';
+import { GroupForm } from '@/components/services/openldap/GroupForm';
+import { OuForm } from '@/components/services/openldap/OuForm';
 import { FormField } from '@/components/ui/FormField';
 import { Card } from '@/components/ui/Card';
+
+type EntryType = 'user' | 'group' | 'ou';
 
 export default function NewEntryPage({
   params,
@@ -14,6 +19,7 @@ export default function NewEntryPage({
 }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const [entryType, setEntryType] = useState<EntryType>('user');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +41,17 @@ export default function NewEntryPage({
     }
   }
 
+  const renderForm = () => {
+    switch (entryType) {
+      case 'user':
+        return <UserForm onSubmit={() => {}} onCancel={() => {}} />;
+      case 'group':
+        return <GroupForm onSubmit={() => {}} onCancel={() => {}} />;
+      case 'ou':
+        return <OuForm onSubmit={() => {}} onCancel={() => {}} />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
@@ -54,22 +71,28 @@ export default function NewEntryPage({
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Dynamic form fields based on service */}
-            <FormField label="Common Name" required>
-              <Input name="cn" placeholder="Enter common name" required />
-            </FormField>
+          {/* Entry Type Selector */}
+          <FormField label="Entry Type" required>
+            <Select
+              value={entryType}
+              onChange={(e) => setEntryType(e.target.value as EntryType)}
+              options={[
+                { value: 'user', label: 'User' },
+                { value: 'group', label: 'Group' },
+                { value: 'ou', label: 'Organizational Unit' },
+              ]}
+            />
+          </FormField>
 
-            <FormField label="Description">
-              <Input name="description" placeholder="Enter description" />
-            </FormField>
+          <form onSubmit={handleSubmit} className="space-y-6 pt-6 border-t border-gray-200 mt-6">
+            {renderForm()}
 
             <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
               <Button variant="secondary" onClick={() => router.push(`/${resolvedParams.service}`)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? 'Creating...' : 'Create Entry'}
+                {loading ? 'Creating...' : `Create ${entryType.charAt(0).toUpperCase() + entryType.slice(1)}`}
               </Button>
             </div>
           </form>

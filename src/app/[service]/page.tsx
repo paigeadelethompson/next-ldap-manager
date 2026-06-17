@@ -5,11 +5,36 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Loading } from '@/components/ui/Loading';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+
+type EntryType = 'user' | 'group' | 'ou';
 
 interface ServiceEntry {
   dn: string;
   attributes: Record<string, unknown>;
 }
+
+interface OpenLdapUser {
+  dn: string;
+  cn: string;
+  uid?: string;
+  mail?: string;
+}
+
+interface OpenLdapGroup {
+  dn: string;
+  cn: string;
+  gidNumber?: number;
+  memberUid?: string[];
+}
+
+interface OpenLdapOu {
+  dn: string;
+  ou: string;
+  description?: string;
+}
+
+const OpenLDAPEntryTypes = ['user', 'group', 'ou'] as const;
 
 export default function ServicePage({
   params,
@@ -18,6 +43,7 @@ export default function ServicePage({
 }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<EntryType>('user');
   const [entries, setEntries] = useState<ServiceEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,22 +63,105 @@ export default function ServicePage({
     fetchEntries();
   }, [resolvedParams.service]);
 
-  if (loading) {
-    return <Loading fullScreen text={`Loading ${resolvedParams.service} entries...`} />;
-  }
+  const getUserTableColumns = () => [
+    { header: 'DN', key: 'dn' },
+    { header: 'Common Name', key: 'cn' },
+    { header: 'UID', key: 'uid' },
+    { header: 'Email', key: 'mail' },
+  ];
 
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-6 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {error}
+  const getGroupTableColumns = () => [
+    { header: 'DN', key: 'dn' },
+    { header: 'Name', key: 'cn' },
+    { header: 'GID', key: 'gidNumber' },
+    { header: 'Members', key: 'memberUid' },
+  ];
+
+  const getOuTableColumns = () => [
+    { header: 'DN', key: 'dn' },
+    { header: 'OU Name', key: 'ou' },
+    { header: 'Description', key: 'description' },
+  ];
+
+  const renderEntriesTable = (entries: ServiceEntry[], columns: { header: string; key: string }[]) => {
+    if (entries.length === 0) {
+      return (
+        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
+          <p className="text-gray-500">No entries found.</p>
         </div>
-        <Button variant="secondary" onClick={() => router.refresh()}>
-          Try Again
-        </Button>
-      </div>
+      );
+    }
+
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {columns.map((col) => (
+              <TableHead key={col.key}>{col.header}</TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {entries.map((entry, idx) => (
+            <TableRow key={entry.dn}>
+              <TableCell className="font-medium">{entry.dn}</TableCell>
+              {columns.slice(1).map((col) => {
+                const value = (entry.attributes as Record<string, unknown>)[col.key];
+                return (
+                  <TableCell key={`${entry.dn}-${col.key}`}>
+                    {Array.isArray(value)
+                      ? value.join(', ')
+                      : typeof value === 'object'
+                      ? JSON.stringify(value)
+                      : String(value ?? '')}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     );
-  }
+  };
+
+  const getUserEntries = (): ServiceEntry[] => {
+    return entries.map((e) => ({
+      dn: e.dn,
+      attributes: {
+        cn: (e.attributes.cn as string) || '',
+        uid: e.attributes.uid as string | undefined,
+        mail: e.attributes.mail as string | undefined,
+        ...e.attributes,
+      },
+    }));
+  };
+
+  const getGroupEntries = (): ServiceEntry[] => {
+    return entries.map((e) => ({
+      dn: e.dn,
+      attributes: {
+        cn: (e.attributes.cn as string) || '',
+        gidNumber: Number(e.attributes.gidNumber),
+        memberUid: Array.isArray(e.attributes.memberUid)
+          ? (e.attributes.memberUid as string[])
+          : e.attributes.memberUid
+          ? [String(e.attributes.memberUid)]
+          : [],
+        ...e.attributes,
+      },
+    }));
+  };
+
+  const getOuEntries = (): ServiceEntry[] => {
+    return entries.map((e) => ({
+      dn: e.dn,
+      attributes: {
+        ou: (e.attributes.ou as string) || '',
+        description: e.attributes.description as string | undefined,
+        ...e.attributes,
+      },
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,28 +175,40 @@ export default function ServicePage({
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {entries.length === 0 ? (
-          <Card>
-            <p className="text-gray-500">No entries found.</p>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {entries.map((entry) => (
-              <Card key={entry.dn}>
-                <h3 className="text-lg font-medium text-gray-900">{entry.dn}</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {Object.entries(entry.attributes)
-                    .slice(0, 3)
-                    .map(([k, v]) => `${k}: ${v}`)
-                    .join(' | ')}
-                  {Object.keys(entry.attributes).length > 3 && (
-                    <span className="text-gray-400">...</span>
-                  )}
-                </p>
-              </Card>
+        {/* Tabs */}
+        <div className="mb-6 border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            {OpenLDAPEntryTypes.map((type) => (
+              <button
+                key={type}
+                onClick={() => setActiveTab(type)}
+                className={`
+                  whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize
+                  ${activeTab === type
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+                `}
+              >
+                {type}s
+              </button>
             ))}
-          </div>
-        )}
+          </nav>
+        </div>
+
+        {/* Entries Table */}
+        <Card>
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div className="text-red-600">{error}</div>
+          ) : activeTab === 'user' ? (
+            renderEntriesTable(getUserEntries(), getUserTableColumns())
+          ) : activeTab === 'group' ? (
+            renderEntriesTable(getGroupEntries(), getGroupTableColumns())
+          ) : (
+            renderEntriesTable(getOuEntries(), getOuTableColumns())
+          )}
+        </Card>
       </main>
     </div>
   );
