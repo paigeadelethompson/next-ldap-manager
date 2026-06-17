@@ -29,24 +29,6 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
     setError(null);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      const submitData = {
-        cn: formData.cn,
-        gidNumber: formData.gidNumber ? parseInt(formData.gidNumber, 10) : undefined,
-        memberUid: formData.memberUid
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        description: formData.description,
-      };
-      await onSubmit(submitData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save group');
-    }
-  }
-
   return (
     <Card title="Group Information">
       {error && (
@@ -55,7 +37,7 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         <FormField label="Group Name (cn)" required description="Name of the group">
           <Input
             name="cn"
@@ -100,9 +82,11 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
           <Button variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">{initialData ? 'Update Group' : 'Create Group'}</Button>
+          <Button type="button" onClick={() => onSubmit(formData)}>
+            {initialData ? 'Update Group' : 'Create Group'}
+          </Button>
         </div>
-      </form>
+      </div>
     </Card>
   );
 }

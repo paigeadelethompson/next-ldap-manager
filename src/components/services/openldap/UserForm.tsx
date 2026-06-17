@@ -34,15 +34,6 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
     setError(null);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      await onSubmit(formData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save user');
-    }
-  }
-
   return (
     <Card title="User Information">
       {error && (
@@ -51,7 +42,7 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         <FormField label="Common Name (cn)" required description="User's display name">
           <Input
             name="cn"
@@ -147,9 +138,11 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
           <Button variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">{initialData ? 'Update User' : 'Create User'}</Button>
+          <Button type="button" onClick={() => onSubmit(formData)}>
+            {initialData ? 'Update User' : 'Create User'}
+          </Button>
         </div>
-      </form>
+      </div>
     </Card>
   );
 }

@@ -27,15 +27,6 @@ export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
     setError(null);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    try {
-      await onSubmit(formData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save OU');
-    }
-  }
-
   return (
     <Card title="Organizational Unit">
       {error && (
@@ -44,7 +35,7 @@ export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         <FormField label="OU Name" required description="Name of the organizational unit">
           <Input
             name="ou"
@@ -68,9 +59,11 @@ export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
           <Button variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">{initialData ? 'Update OU' : 'Create OU'}</Button>
+          <Button type="button" onClick={() => onSubmit(formData)}>
+            {initialData ? 'Update OU' : 'Create OU'}
+          </Button>
         </div>
-      </form>
+      </div>
     </Card>
   );
 }
