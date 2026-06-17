@@ -275,10 +275,10 @@ Each service should be tested with:
 
 ## Implementation Priority
 
-Phase 1 (Core):
+Phase 1 (Core): **COMPLETED**
 1. LDAP client layer (`lib/ldap/client.ts`)
 2. Common UI components (`components/ui/`)
-3. OpenLDAP service (most通用)
+3. OpenLDAP service (most generic)
 4. GraphQL API setup
 
 Phase 2 (Services):
