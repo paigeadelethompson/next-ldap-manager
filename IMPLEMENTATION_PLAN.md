@@ -272,6 +272,7 @@ Operations:
 - https://www.npmjs.com/package/normalize.css
 - https://www.npmjs.com/package/graphql
 - https://www.npmjs.com/package/next
+- TypeScript is a popular way to add type definitions to JavaScript codebases. Out of the box, TypeScript supports JSX and you can get full React Web support by adding @types/react and @types/react-dom to your project.
 
 ### UI Philosophy
 
