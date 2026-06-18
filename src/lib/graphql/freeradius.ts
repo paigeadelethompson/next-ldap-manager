@@ -33,7 +33,7 @@ export const typeDefs = `
     freeradiusProfile(dn: String!): FreeradiusProfile
 
     # NAS Clients
-    freeradiusNas(filter: String): [FreeradiusNas]!
+    freeradiusNases(filter: String): [FreeradiusNas]!
     freeradiusNas(nasname: String!): FreeradiusNas
 
     # User Attributes
@@ -119,14 +119,19 @@ export const queries = {
     return results.length > 0 ? results[0] : null;
   },
 
-  freeradiusNas: async (_parent: unknown, args: { filter?: string } | { nasname: string }, context: any) => {
+  freeradiusNases: async (_parent: unknown, args: { filter?: string }, context: any) => {
     if (!context.ldapClient) throw new Error('LDAP client not available');
     const baseDN = `ou=nas,${getBaseDN()}`;
-    let filter = '(objectClass=radiusNAS)';
-    if ('nasname' in args) {
-      filter = `(&(objectClass=radiusNAS)(nasName=${args.nasname}))`;
-    }
+    const filter = args.filter || '(objectClass=radiusNAS)';
     return await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['*'] });
+  },
+
+  freeradiusNas: async (_parent: unknown, args: { nasname: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const baseDN = `ou=nas,${getBaseDN()}`;
+    const filter = `(nasName=${args.nasname})`;
+    const results = await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['*'] });
+    return results.length > 0 ? results[0] : null;
   },
 
   freeradiusAttributes: async (_parent: unknown, args: { username: string; filter?: string }, context: any) => {
