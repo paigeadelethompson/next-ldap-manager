@@ -33,8 +33,6 @@ export const typeDefs = `
     objectClass: [String]!
   }
 
-  scalar JSON
-
   extend type Query {
     # Users
     openLdapUsers(baseDN: String, filter: String): [OpenLdapUser]!

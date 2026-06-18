@@ -1,6 +1,7 @@
 // Base GraphQL schema and resolvers for LDAP Manager
 // Each service extends this with its own types, queries, and mutations
 
+import { baseTypeDefs } from './types';
 import { typeDefs as openldapTypeDefs } from './openldap';
 import { typeDefs as asteriskTypeDefs } from './asterisk';
 import { typeDefs as freeradiusTypeDefs } from './freeradius';
@@ -98,34 +99,7 @@ const dateScalar = {
 };
 
 const typeDefs = `
-  scalar Date
-
-  # Common types
-  scalar JSON
-
-  # Generic LDAP entry type
-  type LdapEntry {
-    dn: String!
-    attributes: JSON!
-  }
-
-  input LdapChangeInput {
-    attribute: String!
-    values: [JSON]!
-    operation: String! # add, replace, delete
-  }
-
-  extend type Query {
-    # Generic entries
-    ldapEntries(baseDN: String!, filter: String, scope: String, attributes: [String]): [LdapEntry]!
-  }
-
-  extend type Mutation {
-    # Generic entry operations
-    createLdapEntry(dn: String!, attributes: JSON!): LdapEntry!
-    updateLdapEntry(dn: String!, changes: [LdapChangeInput!]!): LdapEntry!
-    deleteLdapEntry(dn: String!): Boolean!
-  }
+  ${baseTypeDefs}
 
   ${openldapTypeDefs}
   ${asteriskTypeDefs}
