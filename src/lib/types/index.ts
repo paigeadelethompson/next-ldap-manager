@@ -57,6 +57,12 @@ export interface LdapChange {
   operation: 'add' | 'replace' | 'delete';
 }
 
+// Generic LDAP entry type (can be used across services)
+export interface LdapEntry {
+  dn: string;
+  attributes: Record<string, unknown>;
+}
+
 // Re-export service-specific types
 export * from './openldap';
 export * from './asterisk';

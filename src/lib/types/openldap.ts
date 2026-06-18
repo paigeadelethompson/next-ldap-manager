@@ -39,11 +39,6 @@ export interface OpenLdapOu {
   objectClass: string[];
 }
 
-export interface OpenLdapEntry {
-  dn: string;
-  attributes: Record<string, unknown>;
-}
-
 // Input types for user operations
 export interface CreateUserInput {
   cn: string;
