@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_KRB5_POLICY_MUTATION, UPDATE_KRB5_POLICY_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_KRB5_POLICY_MUTATION, UPDATE_KRB5_POLICY_MUTATION } from '@/lib/graphql/krb5';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

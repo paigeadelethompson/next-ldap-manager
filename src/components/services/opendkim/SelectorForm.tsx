@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_OPENDKIM_SELECTOR_MUTATION, UPDATE_OPENDKIM_SELECTOR_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_OPENDKIM_SELECTOR_MUTATION, UPDATE_OPENDKIM_SELECTOR_MUTATION } from '@/lib/graphql/opendkim';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

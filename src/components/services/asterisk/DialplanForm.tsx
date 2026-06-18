@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_ASTERISK_DIALPLAN_MUTATION, UPDATE_ASTERISK_DIALPLAN_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_ASTERISK_DIALPLAN_MUTATION, UPDATE_ASTERISK_DIALPLAN_MUTATION } from '@/lib/graphql/asterisk';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

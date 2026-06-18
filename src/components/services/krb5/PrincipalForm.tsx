@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { graphqlRequest } from '@/lib/graphql/client';
 import {
-  graphqlRequest,
   CREATE_KRB5_PRINCIPAL_MUTATION,
   UPDATE_KRB5_PRINCIPAL_MUTATION,
   RESET_KRB5_PRINCIPAL_PASSWORD_MUTATION,
-} from '@/lib/graphql/client';
+} from '@/lib/graphql/krb5';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

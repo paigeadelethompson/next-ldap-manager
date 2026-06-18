@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_NETCRAVE_ICAP_SERVICE_MUTATION, UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_NETCRAVE_ICAP_SERVICE_MUTATION, UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION } from '@/lib/graphql/netcrave';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

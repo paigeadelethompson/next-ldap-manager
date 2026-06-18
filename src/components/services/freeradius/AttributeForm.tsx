@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_FREERADIUS_ATTRIBUTE_MUTATION, UPDATE_FREERADIUS_ATTRIBUTE_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_FREERADIUS_ATTRIBUTE_MUTATION, UPDATE_FREERADIUS_ATTRIBUTE_MUTATION } from '@/lib/graphql/freeradius';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 import { Select } from '@/components/ui/Select';

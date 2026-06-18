@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { graphqlRequest } from '@/lib/graphql/client';
 import {
-  graphqlRequest,
   ISSUE_NETCRAVE_CERTIFICATE_MUTATION,
   REVOKE_NETCRAVE_CERTIFICATE_MUTATION,
   RESTORE_NETCRAVE_CERTIFICATE_MUTATION,
-} from '@/lib/graphql/client';
+} from '@/lib/graphql/netcrave';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

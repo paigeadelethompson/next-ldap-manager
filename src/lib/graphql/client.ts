@@ -27,27 +27,3 @@ export async function graphqlRequest<T = any>(options: GraphqlRequestOptions): P
 
   return data.data;
 }
-
-// Re-export OpenLDAP queries and mutations
-export * from './openldap';
-
-// Re-export FreeRADIUS queries and mutations
-export * from './freeradius';
-
-// Re-export Asterisk queries and mutations
-export * from './asterisk';
-
-// Re-export Kerberos queries and mutations
-export * from './krb5';
-
-// Re-export Netcrave queries and mutations
-export * from './netcrave';
-
-// Re-export OpenDKIM queries and mutations
-export * from './opendkim';
-
-// Re-export Sendmail queries and mutations
-export * from './sendmail';
-
-// Re-export PowerDNS queries and mutations
-export * from './powerdns';

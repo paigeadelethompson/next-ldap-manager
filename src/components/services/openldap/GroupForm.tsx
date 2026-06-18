@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_GROUP_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_GROUP_MUTATION } from '@/lib/graphql/openldap';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 

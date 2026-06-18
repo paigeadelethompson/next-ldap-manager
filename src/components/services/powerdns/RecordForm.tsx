@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { graphqlRequest, CREATE_POWERDNS_RECORD_MUTATION, UPDATE_POWERDNS_RECORD_MUTATION } from '@/lib/graphql/client';
+import { graphqlRequest } from '@/lib/graphql/client';
+import { CREATE_POWERDNS_RECORD_MUTATION, UPDATE_POWERDNS_RECORD_MUTATION } from '@/lib/graphql/powerdns';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
 
