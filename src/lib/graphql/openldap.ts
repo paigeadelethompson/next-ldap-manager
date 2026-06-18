@@ -288,85 +288,163 @@ export const FETCH_OU_QUERY = `
 // OpenLDAP query resolvers
 export const queries = {
   // Users
-  openLdapUsers: async (_parent: unknown, args: { baseDN?: string; filter?: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
-    const baseDN = args.baseDN || 'dc=netcrave,dc=local';
-    const filter = args.filter || '(objectClass=posixAccount)';
-    return await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['cn', 'uid', 'mail', 'givenName', 'sn', 'telephoneNumber', 'title', 'ou'] });
+  openLdapUsers: async (
+    _parent: unknown,
+    args: { baseDN?: string; filter?: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
+    const baseDN = args.baseDN || "dc=netcrave,dc=local";
+    const filter = args.filter || "(objectClass=posixAccount)";
+    return await context.ldapClient.search({
+      baseDN,
+      filter,
+      scope: "subtree",
+      attributes: [
+        "cn",
+        "uid",
+        "mail",
+        "givenName",
+        "sn",
+        "telephoneNumber",
+        "title",
+        "ou",
+      ],
+    });
   },
 
-  openLdapUser: async (_parent: unknown, args: { dn: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  openLdapUser: async (
+    _parent: unknown,
+    args: { dn: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
     const filter = `(dn=${args.dn})`;
-    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
     // Extract the parent DN from the user's DN for search
-    const parts = args.dn.split(',');
+    const parts = args.dn.split(",");
     if (parts.length > 1) {
       parts.shift(); // Remove the first RDN (e.g., uid=jdoe)
     }
-    const searchBase = parts.join(',');
-    const results = await context.ldapClient.search({ baseDN: searchBase || baseDN, filter, scope: 'subtree', attributes: ['*'] });
+    const searchBase = parts.join(",");
+    const results = await context.ldapClient.search({
+      baseDN: searchBase || baseDN,
+      filter,
+      scope: "subtree",
+      attributes: ["*"],
+    });
     return results.length > 0 ? results[0] : null;
   },
 
   // Groups
-  openLdapGroups: async (_parent: unknown, args: { baseDN?: string; filter?: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
-    const baseDN = args.baseDN || 'dc=netcrave,dc=local';
-    const filter = args.filter || '(objectClass=posixGroup)';
-    return await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['cn', 'gidNumber', 'memberUid', 'description'] });
+  openLdapGroups: async (
+    _parent: unknown,
+    args: { baseDN?: string; filter?: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
+    const baseDN = args.baseDN || "dc=netcrave,dc=local";
+    const filter = args.filter || "(objectClass=posixGroup)";
+    return await context.ldapClient.search({
+      baseDN,
+      filter,
+      scope: "subtree",
+      attributes: ["cn", "gidNumber", "memberUid", "description"],
+    });
   },
 
-  openLdapGroup: async (_parent: unknown, args: { dn: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  openLdapGroup: async (
+    _parent: unknown,
+    args: { dn: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
     const filter = `(dn=${args.dn})`;
-    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
     // Extract the parent DN from the group's DN for search
-    const parts = args.dn.split(',');
+    const parts = args.dn.split(",");
     if (parts.length > 1) {
       parts.shift(); // Remove the first RDN (e.g., cn=developers)
     }
-    const searchBase = parts.join(',');
-    const results = await context.ldapClient.search({ baseDN: searchBase || baseDN, filter, scope: 'subtree', attributes: ['*'] });
+    const searchBase = parts.join(",");
+    const results = await context.ldapClient.search({
+      baseDN: searchBase || baseDN,
+      filter,
+      scope: "subtree",
+      attributes: ["*"],
+    });
     return results.length > 0 ? results[0] : null;
   },
 
   // OUs
-  openLdapOus: async (_parent: unknown, args: { baseDN?: string; filter?: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
-    const baseDN = args.baseDN || 'dc=netcrave,dc=local';
-    const filter = args.filter || '(objectClass=organizationalUnit)';
-    return await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['ou', 'description'] });
+  openLdapOus: async (
+    _parent: unknown,
+    args: { baseDN?: string; filter?: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
+    const baseDN = args.baseDN || "dc=netcrave,dc=local";
+    const filter = args.filter || "(objectClass=organizationalUnit)";
+    return await context.ldapClient.search({
+      baseDN,
+      filter,
+      scope: "subtree",
+      attributes: ["ou", "description"],
+    });
   },
 
   openLdapOu: async (_parent: unknown, args: { dn: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+    if (!context.ldapClient) throw new Error("LDAP client not available");
     const filter = `(dn=${args.dn})`;
-    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
     // Extract the parent DN from the OU's DN for search
-    const parts = args.dn.split(',');
+    const parts = args.dn.split(",");
     if (parts.length > 1) {
       parts.shift(); // Remove the first RDN (e.g., ou=Engineering)
     }
-    const searchBase = parts.join(',');
-    const results = await context.ldapClient.search({ baseDN: searchBase || baseDN, filter, scope: 'subtree', attributes: ['*'] });
+    const searchBase = parts.join(",");
+    const results = await context.ldapClient.search({
+      baseDN: searchBase || baseDN,
+      filter,
+      scope: "subtree",
+      attributes: ["*"],
+    });
     return results.length > 0 ? results[0] : null;
   },
 };
 
 // OpenLDAP mutation resolvers
 export const mutations = {
-  createOpenLdapUser: async (_parent: unknown, args: { input: any }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  createOpenLdapUser: async (
+    _parent: unknown,
+    args: { input: any },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
 
-    const { cn, uid, mail, userPassword, givenName, sn, telephoneNumber, title, ou } = args.input;
+    const {
+      cn,
+      uid,
+      mail,
+      userPassword,
+      givenName,
+      sn,
+      telephoneNumber,
+      title,
+      ou,
+    } = args.input;
 
     // Generate UID/GID if not provided
-    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
-    const userDN = `uid=${uid || cn},${ou ? `ou=${ou},` : ''}cn=users,${baseDN}`;
+    const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
+    const userDN = `uid=${uid || cn},${ou ? `ou=${ou},` : ""}cn=users,${baseDN}`;
 
     const attributes: Record<string, string | string[]> = {
-      objectClass: ['person', 'organizationalPerson', 'inetOrgPerson', 'posixAccount'],
+      objectClass: [
+        "person",
+        "organizationalPerson",
+        "inetOrgPerson",
+        "posixAccount",
+      ],
       cn: cn,
       uid: uid || cn.toLowerCase(),
     };
@@ -380,7 +458,8 @@ export const mutations = {
 
     // Add userPassword if provided
     if (userPassword) {
-      attributes.userPassword = '{SSHA}' + Buffer.from(userPassword).toString('base64');
+      attributes.userPassword =
+        "{SSHA}" + Buffer.from(userPassword).toString("base64");
     }
 
     await context.ldapClient.add(userDN, attributes);
@@ -388,13 +467,17 @@ export const mutations = {
     return { dn: userDN, ...attributes };
   },
 
-  updateOpenLdapUser: async (_parent: unknown, args: { dn: string; input: any }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  updateOpenLdapUser: async (
+    _parent: unknown,
+    args: { dn: string; input: any },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
 
     const changes = Object.entries(args.input).map(([key, value]) => ({
       attribute: key,
       values: Array.isArray(value) ? value : [String(value)],
-      operation: 'replace' as const,
+      operation: "replace" as const,
     }));
 
     await context.ldapClient.modify(args.dn, changes);
@@ -402,27 +485,38 @@ export const mutations = {
     return { dn: args.dn, ...args.input };
   },
 
-  deleteOpenLdapUser: async (_parent: unknown, args: { dn: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  deleteOpenLdapUser: async (
+    _parent: unknown,
+    args: { dn: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
     await context.ldapClient.delete(args.dn);
     return true;
   },
 
-  createOpenLdapGroup: async (_parent: unknown, args: { input: any }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  createOpenLdapGroup: async (
+    _parent: unknown,
+    args: { input: any },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
 
     const { cn, gidNumber, memberUid, description } = args.input;
 
-    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
     const groupDN = `cn=${cn},${baseDN}`;
 
     const attributes: Record<string, string | string[]> = {
-      objectClass: ['posixGroup'],
+      objectClass: ["posixGroup"],
       cn: cn,
     };
 
     if (gidNumber) attributes.gidNumber = String(gidNumber);
-    if (memberUid) attributes.memberUid = Array.isArray(memberUid) ? memberUid : [String(memberUid)];
+    if (memberUid)
+      attributes.memberUid = Array.isArray(memberUid)
+        ? memberUid
+        : [String(memberUid)];
     if (description) attributes.description = description;
 
     await context.ldapClient.add(groupDN, attributes);
@@ -430,13 +524,17 @@ export const mutations = {
     return { dn: groupDN, ...attributes };
   },
 
-  updateOpenLdapGroup: async (_parent: unknown, args: { dn: string; input: any }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  updateOpenLdapGroup: async (
+    _parent: unknown,
+    args: { dn: string; input: any },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
 
     const changes = Object.entries(args.input).map(([key, value]) => ({
       attribute: key,
       values: Array.isArray(value) ? value : [String(value)],
-      operation: 'replace' as const,
+      operation: "replace" as const,
     }));
 
     await context.ldapClient.modify(args.dn, changes);
@@ -444,22 +542,30 @@ export const mutations = {
     return { dn: args.dn, ...args.input };
   },
 
-  deleteOpenLdapGroup: async (_parent: unknown, args: { dn: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  deleteOpenLdapGroup: async (
+    _parent: unknown,
+    args: { dn: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
     await context.ldapClient.delete(args.dn);
     return true;
   },
 
-  createOpenLdapOu: async (_parent: unknown, args: { input: any }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  createOpenLdapOu: async (
+    _parent: unknown,
+    args: { input: any },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
 
     const { ou, description } = args.input;
 
-    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
     const ouDN = `ou=${ou},${baseDN}`;
 
     await context.ldapClient.add(ouDN, {
-      objectClass: ['organizationalUnit'],
+      objectClass: ["organizationalUnit"],
       ou: ou,
       ...(description ? { description } : {}),
     });
@@ -467,13 +573,17 @@ export const mutations = {
     return { dn: ouDN, ou, description };
   },
 
-  updateOpenLdapOu: async (_parent: unknown, args: { dn: string; input: any }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  updateOpenLdapOu: async (
+    _parent: unknown,
+    args: { dn: string; input: any },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
 
     const changes = Object.entries(args.input).map(([key, value]) => ({
       attribute: key,
       values: Array.isArray(value) ? value : [String(value)],
-      operation: 'replace' as const,
+      operation: "replace" as const,
     }));
 
     await context.ldapClient.modify(args.dn, changes);
@@ -481,8 +591,12 @@ export const mutations = {
     return { dn: args.dn, ...args.input };
   },
 
-  deleteOpenLdapOu: async (_parent: unknown, args: { dn: string }, context: any) => {
-    if (!context.ldapClient) throw new Error('LDAP client not available');
+  deleteOpenLdapOu: async (
+    _parent: unknown,
+    args: { dn: string },
+    context: any,
+  ) => {
+    if (!context.ldapClient) throw new Error("LDAP client not available");
     await context.ldapClient.delete(args.dn);
     return true;
   },

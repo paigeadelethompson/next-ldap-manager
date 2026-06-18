@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_GROUP_MUTATION } from '@/lib/graphql/openldap';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import { CREATE_GROUP_MUTATION } from "@/lib/graphql/openldap";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface GroupFormProps {
   onSubmit: (data: any) => void;
@@ -14,10 +14,10 @@ interface GroupFormProps {
 
 export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
   const [formData, setFormData] = useState({
-    cn: initialData?.cn || '',
-    gidNumber: initialData?.gidNumber ? String(initialData.gidNumber) : '',
-    memberUid: (initialData?.memberUid as string[])?.join(',') || '',
-    description: initialData?.description || '',
+    cn: initialData?.cn || "",
+    gidNumber: initialData?.gidNumber ? String(initialData.gidNumber) : "",
+    memberUid: (initialData?.memberUid as string[])?.join(",") || "",
+    description: initialData?.description || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
 
       onSubmit(response.createOpenLdapGroup);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create group');
+      setError(err instanceof Error ? err.message : "Failed to create group");
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,11 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Group Name (cn)" required description="Name of the group">
+        <FormField
+          label="Group Name (cn)"
+          required
+          description="Name of the group"
+        >
           <Input
             name="cn"
             value={formData.cn}
@@ -70,7 +74,10 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
         </FormField>
 
         <div className="grid grid-cols-2 gap-6">
-          <FormField label="GID Number" description="Group ID (auto-assigned if empty)">
+          <FormField
+            label="GID Number"
+            description="Group ID (auto-assigned if empty)"
+          >
             <Input
               name="gidNumber"
               value={formData.gidNumber}
@@ -81,7 +88,10 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
           </FormField>
         </div>
 
-        <FormField label="Members (comma-separated UIDs)" description="User IDs belonging to this group">
+        <FormField
+          label="Members (comma-separated UIDs)"
+          description="User IDs belonging to this group"
+        >
           <Input
             name="memberUid"
             value={formData.memberUid}

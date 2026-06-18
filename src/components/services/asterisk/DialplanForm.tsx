@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_ASTERISK_DIALPLAN_MUTATION, UPDATE_ASTERISK_DIALPLAN_MUTATION } from '@/lib/graphql/asterisk';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_ASTERISK_DIALPLAN_MUTATION,
+  UPDATE_ASTERISK_DIALPLAN_MUTATION,
+} from "@/lib/graphql/asterisk";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface DialplanFormProps {
   onSubmit: (data: any) => void;
@@ -12,13 +15,17 @@ interface DialplanFormProps {
   initialData?: any;
 }
 
-export function DialplanForm({ onSubmit, onCancel, initialData }: DialplanFormProps) {
+export function DialplanForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: DialplanFormProps) {
   const [formData, setFormData] = useState({
-    context: initialData?.context || 'default',
-    exten: initialData?.exten || '',
-    priority: initialData?.priority ? String(initialData.priority) : '1',
-    appname: initialData?.appname || '',
-    appdata: initialData?.appdata || '',
+    context: initialData?.context || "default",
+    exten: initialData?.exten || "",
+    priority: initialData?.priority ? String(initialData.priority) : "1",
+    appname: initialData?.appname || "",
+    appdata: initialData?.appdata || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +44,9 @@ export function DialplanForm({ onSubmit, onCancel, initialData }: DialplanFormPr
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_ASTERISK_DIALPLAN_MUTATION : CREATE_ASTERISK_DIALPLAN_MUTATION,
+        query: initialData
+          ? UPDATE_ASTERISK_DIALPLAN_MUTATION
+          : CREATE_ASTERISK_DIALPLAN_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -50,9 +59,13 @@ export function DialplanForm({ onSubmit, onCancel, initialData }: DialplanFormPr
         },
       });
 
-      onSubmit(response[initialData ? 'updateAsteriskDialplan' : 'createAsteriskDialplan']);
+      onSubmit(
+        response[
+          initialData ? "updateAsteriskDialplan" : "createAsteriskDialplan"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save dialplan');
+      setError(err instanceof Error ? err.message : "Failed to save dialplan");
     } finally {
       setLoading(false);
     }

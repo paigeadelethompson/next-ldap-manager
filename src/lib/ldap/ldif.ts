@@ -10,35 +10,38 @@ export function parseLDIF(ldif: string): LDIFEntry[] {
   let currentEntry: Partial<LDIFEntry> = {};
   let currentAttribute: string | null = null;
 
-  const lines = ldif.split('\n');
+  const lines = ldif.split("\n");
 
   for (const line of lines) {
     // Skip empty lines and comments
-    if (!line.trim() || line.startsWith('#')) {
+    if (!line.trim() || line.startsWith("#")) {
       continue;
     }
 
     // Handle line continuation (spaces at start)
-    if (line.startsWith(' ') && currentAttribute) {
+    if (line.startsWith(" ") && currentAttribute) {
       const continuedValue = line.trim();
       const currentValue = currentEntry.attributes?.[currentAttribute];
 
       if (Array.isArray(currentValue)) {
         currentValue[currentValue.length - 1] += continuedValue;
       } else if (currentValue) {
-        currentEntry.attributes![currentAttribute] = [currentValue, continuedValue];
+        currentEntry.attributes![currentAttribute] = [
+          currentValue,
+          continuedValue,
+        ];
       }
       continue;
     }
 
     // Parse attribute: value
-    const colonIndex = line.indexOf(':');
+    const colonIndex = line.indexOf(":");
     if (colonIndex > 0) {
       const attribute = line.substring(0, colonIndex).trim();
       let value = line.substring(colonIndex + 1).trim();
 
       // Handle base64 encoded values (::)
-      if (line[colonIndex + 1] === ':') {
+      if (line[colonIndex + 1] === ":") {
         try {
           value = atob(value);
         } catch {
@@ -66,7 +69,7 @@ export function parseLDIF(ldif: string): LDIFEntry[] {
     }
 
     // Check for entry separator (single -)
-    if (line === '-') {
+    if (line === "-") {
       if (currentEntry.dn && currentEntry.attributes) {
         entries.push(currentEntry as LDIFEntry);
       }
@@ -84,7 +87,7 @@ export function parseLDIF(ldif: string): LDIFEntry[] {
 }
 
 export function serializeLDIF(entries: LDIFEntry[]): string {
-  return entries.map(serializeEntry).join('\n---\n');
+  return entries.map(serializeEntry).join("\n---\n");
 }
 
 function serializeEntry(entry: LDIFEntry): string {
@@ -103,5 +106,5 @@ function serializeEntry(entry: LDIFEntry): string {
     }
   }
 
-  return lines.join('\n');
+  return lines.join("\n");
 }

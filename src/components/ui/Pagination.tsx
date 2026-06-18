@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Button } from './Button';
-import { cn } from '@/lib/utils';
+import { Button } from "./Button";
+import { cn } from "@/lib/utils";
 
 export interface PaginationProps {
   page: number;
@@ -36,7 +36,7 @@ export function Pagination({
     }
   } else {
     if (page > 3) {
-      pages.push(1, 'ellipsis');
+      pages.push(1, "ellipsis");
     }
     for (
       let i = Math.max(1, page - 1);
@@ -46,7 +46,7 @@ export function Pagination({
       pages.push(i);
     }
     if (page < totalPages - 2) {
-      pages.push('ellipsis', totalPages);
+      pages.push("ellipsis", totalPages);
     } else if (page === totalPages - 2) {
       pages.push(page + 1, totalPages);
     } else if (page === totalPages - 1) {
@@ -76,17 +76,15 @@ export function Pagination({
           {pages.map((p, i) => (
             <Button
               key={i}
-              variant={typeof p === 'number' && p === page ? 'default' : 'ghost'}
+              variant={
+                typeof p === "number" && p === page ? "default" : "ghost"
+              }
               size="sm"
-              onClick={() => typeof p === 'number' && onPageChange(p)}
+              onClick={() => typeof p === "number" && onPageChange(p)}
               className="w-9 h-9 p-0"
-              disabled={p === 'ellipsis'}
+              disabled={p === "ellipsis"}
             >
-              {p === 'ellipsis' ? (
-                <span className="text-sm">...</span>
-              ) : (
-                p
-              )}
+              {p === "ellipsis" ? <span className="text-sm">...</span> : p}
             </Button>
           ))}
         </div>

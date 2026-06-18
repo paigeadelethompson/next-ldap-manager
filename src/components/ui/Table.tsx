@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { HTMLAttributes, ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { HTMLAttributes, ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 export interface TableProps extends HTMLAttributes<HTMLTableElement> {
   children: ReactNode;
@@ -11,24 +11,33 @@ const Table = ({ className, children, ...props }: TableProps) => (
   <div className="w-full overflow-auto">
     <table
       ref={undefined}
-      className={cn('w-full caption-bottom text-sm', className)}
+      className={cn("w-full caption-bottom text-sm", className)}
       {...props}
     >
       {children}
     </table>
   </div>
 );
-Table.displayName = 'Table';
+Table.displayName = "Table";
 
-export const TableHeader = ({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) => (
-  <thead className={cn('[&_tr]:border-b [&_tr]:border-gray-200 bg-gray-50', className)} {...props} />
-);
-
-export const TableBody = ({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) => (
-  <tbody
-    className={cn('[&_tr:last-child]:border-0', className)}
+export const TableHeader = ({
+  className,
+  ...props
+}: HTMLAttributes<HTMLTableSectionElement>) => (
+  <thead
+    className={cn(
+      "[&_tr]:border-b [&_tr]:border-gray-200 bg-gray-50",
+      className,
+    )}
     {...props}
   />
+);
+
+export const TableBody = ({
+  className,
+  ...props
+}: HTMLAttributes<HTMLTableSectionElement>) => (
+  <tbody className={cn("[&_tr:last-child]:border-0", className)} {...props} />
 );
 
 export const TableRow = ({
@@ -37,8 +46,8 @@ export const TableRow = ({
 }: HTMLAttributes<HTMLTableRowElement> & { selectable?: boolean }) => (
   <tr
     className={cn(
-      'transition-colors hover:bg-blue-50/30 data-[state=selected]:bg-gray-50',
-      className
+      "transition-colors hover:bg-blue-50/30 data-[state=selected]:bg-gray-50",
+      className,
     )}
     {...props}
   />
@@ -50,8 +59,8 @@ export const TableHead = ({
 }: HTMLAttributes<HTMLTableCellElement>) => (
   <th
     className={cn(
-      'px-6 py-4 text-left align-middle font-semibold text-gray-700 bg-gray-50',
-      className
+      "px-6 py-4 text-left align-middle font-semibold text-gray-700 bg-gray-50",
+      className,
     )}
     {...props}
   />
@@ -62,7 +71,10 @@ export const TableCell = ({
   ...props
 }: HTMLAttributes<HTMLTableCellElement>) => (
   <td
-    className={cn('px-6 py-4 align-middle text-gray-600 border-b border-gray-100', className)}
+    className={cn(
+      "px-6 py-4 align-middle text-gray-600 border-b border-gray-100",
+      className,
+    )}
     {...props}
   />
 );
@@ -71,10 +83,7 @@ export const TableCaption = ({
   className,
   ...props
 }: HTMLAttributes<HTMLTableCaptionElement>) => (
-  <caption
-    className={cn('mt-4 text-sm text-gray-500', className)}
-    {...props}
-  />
+  <caption className={cn("mt-4 text-sm text-gray-500", className)} {...props} />
 );
 
 export { Table };

@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_KRB5_POLICY_MUTATION, UPDATE_KRB5_POLICY_MUTATION } from '@/lib/graphql/krb5';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_KRB5_POLICY_MUTATION,
+  UPDATE_KRB5_POLICY_MUTATION,
+} from "@/lib/graphql/krb5";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface PolicyFormProps {
   onSubmit: (data: any) => void;
@@ -12,16 +15,34 @@ interface PolicyFormProps {
   initialData?: any;
 }
 
-export function PolicyForm({ onSubmit, onCancel, initialData }: PolicyFormProps) {
+export function PolicyForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: PolicyFormProps) {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    minPasswordLength: initialData?.minPasswordLength ? String(initialData.minPasswordLength) : '8',
-    minPasswordAge: initialData?.minPasswordAge ? String(initialData.minPasswordAge) : '0',
-    maxPasswordAge: initialData?.maxPasswordAge ? String(initialData.maxPasswordAge) : '7776000',
-    passwordHistoryLength: initialData?.passwordHistoryLength ? String(initialData.passwordHistoryLength) : '5',
-    lockoutDuration: initialData?.lockoutDuration ? String(initialData.lockoutDuration) : '600',
-    failedAuthCount: initialData?.failedAuthCount ? String(initialData.failedAuthCount) : '5',
-    resetAuthCount: initialData?.resetAuthCount ? String(initialData.resetAuthCount) : '3600',
+    name: initialData?.name || "",
+    minPasswordLength: initialData?.minPasswordLength
+      ? String(initialData.minPasswordLength)
+      : "8",
+    minPasswordAge: initialData?.minPasswordAge
+      ? String(initialData.minPasswordAge)
+      : "0",
+    maxPasswordAge: initialData?.maxPasswordAge
+      ? String(initialData.maxPasswordAge)
+      : "7776000",
+    passwordHistoryLength: initialData?.passwordHistoryLength
+      ? String(initialData.passwordHistoryLength)
+      : "5",
+    lockoutDuration: initialData?.lockoutDuration
+      ? String(initialData.lockoutDuration)
+      : "600",
+    failedAuthCount: initialData?.failedAuthCount
+      ? String(initialData.failedAuthCount)
+      : "5",
+    resetAuthCount: initialData?.resetAuthCount
+      ? String(initialData.resetAuthCount)
+      : "3600",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,25 +61,41 @@ export function PolicyForm({ onSubmit, onCancel, initialData }: PolicyFormProps)
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_KRB5_POLICY_MUTATION : CREATE_KRB5_POLICY_MUTATION,
+        query: initialData
+          ? UPDATE_KRB5_POLICY_MUTATION
+          : CREATE_KRB5_POLICY_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
             name: formData.name,
-            minPasswordLength: formData.minPasswordLength ? parseInt(formData.minPasswordLength, 10) : undefined,
-            minPasswordAge: formData.minPasswordAge ? parseInt(formData.minPasswordAge, 10) : undefined,
-            maxPasswordAge: formData.maxPasswordAge ? parseInt(formData.maxPasswordAge, 10) : undefined,
-            passwordHistoryLength: formData.passwordHistoryLength ? parseInt(formData.passwordHistoryLength, 10) : undefined,
-            lockoutDuration: formData.lockoutDuration ? parseInt(formData.lockoutDuration, 10) : undefined,
-            failedAuthCount: formData.failedAuthCount ? parseInt(formData.failedAuthCount, 10) : undefined,
-            resetAuthCount: formData.resetAuthCount ? parseInt(formData.resetAuthCount, 10) : undefined,
+            minPasswordLength: formData.minPasswordLength
+              ? parseInt(formData.minPasswordLength, 10)
+              : undefined,
+            minPasswordAge: formData.minPasswordAge
+              ? parseInt(formData.minPasswordAge, 10)
+              : undefined,
+            maxPasswordAge: formData.maxPasswordAge
+              ? parseInt(formData.maxPasswordAge, 10)
+              : undefined,
+            passwordHistoryLength: formData.passwordHistoryLength
+              ? parseInt(formData.passwordHistoryLength, 10)
+              : undefined,
+            lockoutDuration: formData.lockoutDuration
+              ? parseInt(formData.lockoutDuration, 10)
+              : undefined,
+            failedAuthCount: formData.failedAuthCount
+              ? parseInt(formData.failedAuthCount, 10)
+              : undefined,
+            resetAuthCount: formData.resetAuthCount
+              ? parseInt(formData.resetAuthCount, 10)
+              : undefined,
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateKrb5Policy' : 'createKrb5Policy']);
+      onSubmit(response[initialData ? "updateKrb5Policy" : "createKrb5Policy"]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save policy');
+      setError(err instanceof Error ? err.message : "Failed to save policy");
     } finally {
       setLoading(false);
     }
@@ -73,7 +110,11 @@ export function PolicyForm({ onSubmit, onCancel, initialData }: PolicyFormProps)
       )}
 
       <div className="space-y-6">
-        <FormField label="Policy Name" required description="Name of the Kerberos policy">
+        <FormField
+          label="Policy Name"
+          required
+          description="Name of the Kerberos policy"
+        >
           <Input
             name="name"
             value={formData.name}

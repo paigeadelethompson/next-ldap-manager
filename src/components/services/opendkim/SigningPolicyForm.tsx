@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_OPENDKIM_SIGNING_POLICY_MUTATION, UPDATE_OPENDKIM_SIGNING_POLICY_MUTATION } from '@/lib/graphql/opendkim';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_OPENDKIM_SIGNING_POLICY_MUTATION,
+  UPDATE_OPENDKIM_SIGNING_POLICY_MUTATION,
+} from "@/lib/graphql/opendkim";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface SigningPolicyFormProps {
   onSubmit: (data: any) => void;
@@ -12,14 +15,23 @@ interface SigningPolicyFormProps {
   initialData?: any;
 }
 
-export function SigningPolicyForm({ onSubmit, onCancel, initialData }: SigningPolicyFormProps) {
+export function SigningPolicyForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: SigningPolicyFormProps) {
   const [formData, setFormData] = useState({
-    domain: initialData?.domain || '',
-    selector: initialData?.selector || 'default',
-    key: initialData?.key || '',
-    canonic: initialData?.canonic || 'relaxed:relaxed',
-    signAlgorithm: initialData?.signAlgorithm || 'rsa-sha256',
-    subdomains: initialData?.subdomains !== undefined ? (initialData.subdomains ? 'true' : 'false') : 'false',
+    domain: initialData?.domain || "",
+    selector: initialData?.selector || "default",
+    key: initialData?.key || "",
+    canonic: initialData?.canonic || "relaxed:relaxed",
+    signAlgorithm: initialData?.signAlgorithm || "rsa-sha256",
+    subdomains:
+      initialData?.subdomains !== undefined
+        ? initialData.subdomains
+          ? "true"
+          : "false"
+        : "false",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +50,9 @@ export function SigningPolicyForm({ onSubmit, onCancel, initialData }: SigningPo
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_OPENDKIM_SIGNING_POLICY_MUTATION : CREATE_OPENDKIM_SIGNING_POLICY_MUTATION,
+        query: initialData
+          ? UPDATE_OPENDKIM_SIGNING_POLICY_MUTATION
+          : CREATE_OPENDKIM_SIGNING_POLICY_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -47,14 +61,22 @@ export function SigningPolicyForm({ onSubmit, onCancel, initialData }: SigningPo
             key: formData.key,
             canonic: formData.canonic,
             signAlgorithm: formData.signAlgorithm,
-            subdomains: formData.subdomains === 'true',
+            subdomains: formData.subdomains === "true",
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateOpenDkimSigningPolicy' : 'createOpenDkimSigningPolicy']);
+      onSubmit(
+        response[
+          initialData
+            ? "updateOpenDkimSigningPolicy"
+            : "createOpenDkimSigningPolicy"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save signing policy');
+      setError(
+        err instanceof Error ? err.message : "Failed to save signing policy",
+      );
     } finally {
       setLoading(false);
     }
@@ -69,7 +91,11 @@ export function SigningPolicyForm({ onSubmit, onCancel, initialData }: SigningPo
       )}
 
       <div className="space-y-6">
-        <FormField label="Domain" required description="Domain this policy applies to">
+        <FormField
+          label="Domain"
+          required
+          description="Domain this policy applies to"
+        >
           <Input
             name="domain"
             value={formData.domain}

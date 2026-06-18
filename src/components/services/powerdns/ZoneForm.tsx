@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_POWERDNS_ZONE_MUTATION, UPDATE_POWERDNS_ZONE_MUTATION } from '@/lib/graphql/powerdns';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_POWERDNS_ZONE_MUTATION,
+  UPDATE_POWERDNS_ZONE_MUTATION,
+} from "@/lib/graphql/powerdns";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface ZoneFormProps {
   onSubmit: (data: any) => void;
@@ -14,15 +17,25 @@ interface ZoneFormProps {
 
 export function ZoneForm({ onSubmit, onCancel, initialData }: ZoneFormProps) {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    type: initialData?.type || 'NATIVE',
-    ttl: initialData?.ttl ? String(initialData.ttl) : '86400',
-    soa: initialData?.soa || '',
-    master: initialData?.master || '',
-    nsec3param: initialData?.nsec3param || '',
-    nsec3narrow: initialData?.nsec3narrow !== undefined ? (initialData.nsec3narrow ? 'true' : 'false') : 'false',
-    presigned: initialData?.presigned !== undefined ? (initialData.presigned ? 'true' : 'false') : 'false',
-    kind: initialData?.kind || 'NATIVE',
+    name: initialData?.name || "",
+    type: initialData?.type || "NATIVE",
+    ttl: initialData?.ttl ? String(initialData.ttl) : "86400",
+    soa: initialData?.soa || "",
+    master: initialData?.master || "",
+    nsec3param: initialData?.nsec3param || "",
+    nsec3narrow:
+      initialData?.nsec3narrow !== undefined
+        ? initialData.nsec3narrow
+          ? "true"
+          : "false"
+        : "false",
+    presigned:
+      initialData?.presigned !== undefined
+        ? initialData.presigned
+          ? "true"
+          : "false"
+        : "false",
+    kind: initialData?.kind || "NATIVE",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -41,7 +54,9 @@ export function ZoneForm({ onSubmit, onCancel, initialData }: ZoneFormProps) {
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_POWERDNS_ZONE_MUTATION : CREATE_POWERDNS_ZONE_MUTATION,
+        query: initialData
+          ? UPDATE_POWERDNS_ZONE_MUTATION
+          : CREATE_POWERDNS_ZONE_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -51,16 +66,18 @@ export function ZoneForm({ onSubmit, onCancel, initialData }: ZoneFormProps) {
             soa: formData.soa,
             master: formData.master,
             nsec3param: formData.nsec3param,
-            nsec3narrow: formData.nsec3narrow === 'true',
-            presigned: formData.presigned === 'true',
+            nsec3narrow: formData.nsec3narrow === "true",
+            presigned: formData.presigned === "true",
             kind: formData.kind,
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updatePowerdnsZone' : 'createPowerdnsZone']);
+      onSubmit(
+        response[initialData ? "updatePowerdnsZone" : "createPowerdnsZone"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save zone');
+      setError(err instanceof Error ? err.message : "Failed to save zone");
     } finally {
       setLoading(false);
     }
@@ -75,7 +92,11 @@ export function ZoneForm({ onSubmit, onCancel, initialData }: ZoneFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Zone Name" required description="Fully qualified domain name (e.g., example.com)">
+        <FormField
+          label="Zone Name"
+          required
+          description="Fully qualified domain name (e.g., example.com)"
+        >
           <Input
             name="name"
             value={formData.name}

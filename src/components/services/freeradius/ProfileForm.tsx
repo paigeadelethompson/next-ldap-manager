@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_FREERADIUS_PROFILE_MUTATION, UPDATE_FREERADIUS_PROFILE_MUTATION } from '@/lib/graphql/freeradius';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_FREERADIUS_PROFILE_MUTATION,
+  UPDATE_FREERADIUS_PROFILE_MUTATION,
+} from "@/lib/graphql/freeradius";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface ProfileFormProps {
   onSubmit: (data: any) => void;
@@ -12,11 +15,17 @@ interface ProfileFormProps {
   initialData?: any;
 }
 
-export function ProfileForm({ onSubmit, onCancel, initialData }: ProfileFormProps) {
+export function ProfileForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: ProfileFormProps) {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    description: initialData?.description || '',
-    attributes: initialData?.attributes ? JSON.stringify(initialData.attributes, null, 2) : '',
+    name: initialData?.name || "",
+    description: initialData?.description || "",
+    attributes: initialData?.attributes
+      ? JSON.stringify(initialData.attributes, null, 2)
+      : "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -48,12 +57,14 @@ export function ProfileForm({ onSubmit, onCancel, initialData }: ProfileFormProp
         try {
           attributes = JSON.parse(formData.attributes);
         } catch (err) {
-          throw new Error('Invalid JSON in attributes field');
+          throw new Error("Invalid JSON in attributes field");
         }
       }
 
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_FREERADIUS_PROFILE_MUTATION : CREATE_FREERADIUS_PROFILE_MUTATION,
+        query: initialData
+          ? UPDATE_FREERADIUS_PROFILE_MUTATION
+          : CREATE_FREERADIUS_PROFILE_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -64,9 +75,13 @@ export function ProfileForm({ onSubmit, onCancel, initialData }: ProfileFormProp
         },
       });
 
-      onSubmit(response[initialData ? 'updateFreeradiusProfile' : 'createFreeradiusProfile']);
+      onSubmit(
+        response[
+          initialData ? "updateFreeradiusProfile" : "createFreeradiusProfile"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save profile');
+      setError(err instanceof Error ? err.message : "Failed to save profile");
     } finally {
       setLoading(false);
     }
@@ -81,7 +96,11 @@ export function ProfileForm({ onSubmit, onCancel, initialData }: ProfileFormProp
       )}
 
       <div className="space-y-6">
-        <FormField label="Profile Name" required description="Name of the Radius profile">
+        <FormField
+          label="Profile Name"
+          required
+          description="Name of the Radius profile"
+        >
           <Input
             name="name"
             value={formData.name}
@@ -102,7 +121,10 @@ export function ProfileForm({ onSubmit, onCancel, initialData }: ProfileFormProp
 
         <div className="grid grid-cols-2 gap-6">
           <div className="col-span-2">
-            <FormField label="Attributes (JSON)" description="Radius attributes in JSON format">
+            <FormField
+              label="Attributes (JSON)"
+              description="Radius attributes in JSON format"
+            >
               <textarea
                 name="attributes"
                 value={formData.attributes}

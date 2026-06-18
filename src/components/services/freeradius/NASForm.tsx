@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_FREERADIUS_NAS_MUTATION, UPDATE_FREERADIUS_NAS_MUTATION } from '@/lib/graphql/freeradius';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_FREERADIUS_NAS_MUTATION,
+  UPDATE_FREERADIUS_NAS_MUTATION,
+} from "@/lib/graphql/freeradius";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface NASFormProps {
   onSubmit: (data: any) => void;
@@ -14,12 +17,12 @@ interface NASFormProps {
 
 export function NASForm({ onSubmit, onCancel, initialData }: NASFormProps) {
   const [formData, setFormData] = useState({
-    nasname: initialData?.nasname || '',
-    shortname: initialData?.shortname || '',
-    type: initialData?.type || 'other',
-    secret: initialData?.secret || '',
-    description: initialData?.description || '',
-    radiusclientid: initialData?.radiusclientid || '',
+    nasname: initialData?.nasname || "",
+    shortname: initialData?.shortname || "",
+    type: initialData?.type || "other",
+    secret: initialData?.secret || "",
+    description: initialData?.description || "",
+    radiusclientid: initialData?.radiusclientid || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +41,9 @@ export function NASForm({ onSubmit, onCancel, initialData }: NASFormProps) {
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_FREERADIUS_NAS_MUTATION : CREATE_FREERADIUS_NAS_MUTATION,
+        query: initialData
+          ? UPDATE_FREERADIUS_NAS_MUTATION
+          : CREATE_FREERADIUS_NAS_MUTATION,
         variables: {
           nasname: initialData?.nasname,
           input: {
@@ -52,9 +57,11 @@ export function NASForm({ onSubmit, onCancel, initialData }: NASFormProps) {
         },
       });
 
-      onSubmit(response[initialData ? 'updateFreeradiusNas' : 'createFreeradiusNas']);
+      onSubmit(
+        response[initialData ? "updateFreeradiusNas" : "createFreeradiusNas"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save NAS');
+      setError(err instanceof Error ? err.message : "Failed to save NAS");
     } finally {
       setLoading(false);
     }
@@ -69,7 +76,11 @@ export function NASForm({ onSubmit, onCancel, initialData }: NASFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="NAS Name" required description="IP address or hostname of the NAS">
+        <FormField
+          label="NAS Name"
+          required
+          description="IP address or hostname of the NAS"
+        >
           <Input
             name="nasname"
             value={formData.nasname}
@@ -107,7 +118,11 @@ export function NASForm({ onSubmit, onCancel, initialData }: NASFormProps) {
           </FormField>
         </div>
 
-        <FormField label="Secret" required description="Shared secret between NAS and RADIUS server">
+        <FormField
+          label="Secret"
+          required
+          description="Shared secret between NAS and RADIUS server"
+        >
           <Input
             name="secret"
             type="password"

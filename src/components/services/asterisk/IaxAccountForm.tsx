@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_ASTERISK_IAX_ACCOUNT_MUTATION, UPDATE_ASTERISK_IAX_ACCOUNT_MUTATION } from '@/lib/graphql/asterisk';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_ASTERISK_IAX_ACCOUNT_MUTATION,
+  UPDATE_ASTERISK_IAX_ACCOUNT_MUTATION,
+} from "@/lib/graphql/asterisk";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface IaxAccountFormProps {
   onSubmit: (data: any) => void;
@@ -12,18 +15,22 @@ interface IaxAccountFormProps {
   initialData?: any;
 }
 
-export function IaxAccountForm({ onSubmit, onCancel, initialData }: IaxAccountFormProps) {
+export function IaxAccountForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: IaxAccountFormProps) {
   const [formData, setFormData] = useState({
-    accountid: initialData?.accountid || '',
-    secret: initialData?.secret || '',
-    context: initialData?.context || 'default',
-    host: initialData?.host || '',
-    trunks: initialData?.trunks ? 'true' : 'false',
-    transfer: initialData?.transfer || '',
-    password: initialData?.password || '',
-    callgroup: initialData?.callgroup || '',
-    pickupgroup: initialData?.pickupgroup || '',
-    mailboxes: initialData?.mailboxes || '',
+    accountid: initialData?.accountid || "",
+    secret: initialData?.secret || "",
+    context: initialData?.context || "default",
+    host: initialData?.host || "",
+    trunks: initialData?.trunks ? "true" : "false",
+    transfer: initialData?.transfer || "",
+    password: initialData?.password || "",
+    callgroup: initialData?.callgroup || "",
+    pickupgroup: initialData?.pickupgroup || "",
+    mailboxes: initialData?.mailboxes || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,7 +49,9 @@ export function IaxAccountForm({ onSubmit, onCancel, initialData }: IaxAccountFo
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_ASTERISK_IAX_ACCOUNT_MUTATION : CREATE_ASTERISK_IAX_ACCOUNT_MUTATION,
+        query: initialData
+          ? UPDATE_ASTERISK_IAX_ACCOUNT_MUTATION
+          : CREATE_ASTERISK_IAX_ACCOUNT_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -50,7 +59,7 @@ export function IaxAccountForm({ onSubmit, onCancel, initialData }: IaxAccountFo
             secret: formData.secret,
             context: formData.context,
             host: formData.host,
-            trunks: formData.trunks === 'true',
+            trunks: formData.trunks === "true",
             transfer: formData.transfer,
             password: formData.password,
             callgroup: formData.callgroup,
@@ -60,9 +69,15 @@ export function IaxAccountForm({ onSubmit, onCancel, initialData }: IaxAccountFo
         },
       });
 
-      onSubmit(response[initialData ? 'updateAsteriskIaxAccount' : 'createAsteriskIaxAccount']);
+      onSubmit(
+        response[
+          initialData ? "updateAsteriskIaxAccount" : "createAsteriskIaxAccount"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save IAX account');
+      setError(
+        err instanceof Error ? err.message : "Failed to save IAX account",
+      );
     } finally {
       setLoading(false);
     }
@@ -77,7 +92,11 @@ export function IaxAccountForm({ onSubmit, onCancel, initialData }: IaxAccountFo
       )}
 
       <div className="space-y-6">
-        <FormField label="Account ID" required description="IAX account username/extension">
+        <FormField
+          label="Account ID"
+          required
+          description="IAX account username/extension"
+        >
           <Input
             name="accountid"
             value={formData.accountid}

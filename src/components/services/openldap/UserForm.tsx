@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_USER_MUTATION } from '@/lib/graphql/openldap';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import { CREATE_USER_MUTATION } from "@/lib/graphql/openldap";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface UserFormProps {
   onSubmit: (data: any) => void;
@@ -14,15 +14,15 @@ interface UserFormProps {
 
 export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
   const [formData, setFormData] = useState({
-    cn: initialData?.cn || '',
-    uid: initialData?.uid || '',
-    mail: initialData?.mail || '',
-    userPassword: '',
-    givenName: initialData?.givenName || '',
-    sn: initialData?.sn || '',
-    telephoneNumber: initialData?.telephoneNumber || '',
-    title: initialData?.title || '',
-    ou: initialData?.ou || '',
+    cn: initialData?.cn || "",
+    uid: initialData?.uid || "",
+    mail: initialData?.mail || "",
+    userPassword: "",
+    givenName: initialData?.givenName || "",
+    sn: initialData?.sn || "",
+    telephoneNumber: initialData?.telephoneNumber || "",
+    title: initialData?.title || "",
+    ou: initialData?.ou || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
 
       onSubmit(response.createOpenLdapUser);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create user');
+      setError(err instanceof Error ? err.message : "Failed to create user");
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,11 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Common Name (cn)" required description="User's display name">
+        <FormField
+          label="Common Name (cn)"
+          required
+          description="User's display name"
+        >
           <Input
             name="cn"
             value={formData.cn}
@@ -84,7 +88,10 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
             />
           </FormField>
 
-          <FormField label="Organizational Unit" description="User's department/group">
+          <FormField
+            label="Organizational Unit"
+            description="User's department/group"
+          >
             <Input
               name="ou"
               value={formData.ou}

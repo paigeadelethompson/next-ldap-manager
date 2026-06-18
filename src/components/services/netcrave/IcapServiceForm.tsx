@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_NETCRAVE_ICAP_SERVICE_MUTATION, UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION } from '@/lib/graphql/netcrave';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_NETCRAVE_ICAP_SERVICE_MUTATION,
+  UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION,
+} from "@/lib/graphql/netcrave";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface IcapServiceFormProps {
   onSubmit: (data: any) => void;
@@ -12,14 +15,23 @@ interface IcapServiceFormProps {
   initialData?: any;
 }
 
-export function IcapServiceForm({ onSubmit, onCancel, initialData }: IcapServiceFormProps) {
+export function IcapServiceForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: IcapServiceFormProps) {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    hostname: initialData?.hostname || '',
-    port: initialData?.port ? String(initialData.port) : '1344',
-    uri: initialData?.uri || '/',
-    version: initialData?.version || '1.0',
-    enabled: initialData?.enabled !== undefined ? (initialData.enabled ? 'true' : 'false') : 'true',
+    name: initialData?.name || "",
+    hostname: initialData?.hostname || "",
+    port: initialData?.port ? String(initialData.port) : "1344",
+    uri: initialData?.uri || "/",
+    version: initialData?.version || "1.0",
+    enabled:
+      initialData?.enabled !== undefined
+        ? initialData.enabled
+          ? "true"
+          : "false"
+        : "true",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +50,9 @@ export function IcapServiceForm({ onSubmit, onCancel, initialData }: IcapService
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION : CREATE_NETCRAVE_ICAP_SERVICE_MUTATION,
+        query: initialData
+          ? UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION
+          : CREATE_NETCRAVE_ICAP_SERVICE_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -47,14 +61,22 @@ export function IcapServiceForm({ onSubmit, onCancel, initialData }: IcapService
             port: parseInt(formData.port, 10),
             uri: formData.uri,
             version: formData.version,
-            enabled: formData.enabled === 'true',
+            enabled: formData.enabled === "true",
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateNetcraveIcapService' : 'createNetcraveIcapService']);
+      onSubmit(
+        response[
+          initialData
+            ? "updateNetcraveIcapService"
+            : "createNetcraveIcapService"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save ICAP service');
+      setError(
+        err instanceof Error ? err.message : "Failed to save ICAP service",
+      );
     } finally {
       setLoading(false);
     }
@@ -69,7 +91,11 @@ export function IcapServiceForm({ onSubmit, onCancel, initialData }: IcapService
       )}
 
       <div className="space-y-6">
-        <FormField label="Service Name" required description="Name of the ICAP service">
+        <FormField
+          label="Service Name"
+          required
+          description="Name of the ICAP service"
+        >
           <Input
             name="name"
             value={formData.name}

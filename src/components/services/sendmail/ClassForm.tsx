@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_SENDMAIL_CLASS_MUTATION, UPDATE_SENDMAIL_CLASS_MUTATION } from '@/lib/graphql/sendmail';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_SENDMAIL_CLASS_MUTATION,
+  UPDATE_SENDMAIL_CLASS_MUTATION,
+} from "@/lib/graphql/sendmail";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface ClassFormProps {
   onSubmit: (data: any) => void;
@@ -14,9 +17,11 @@ interface ClassFormProps {
 
 export function ClassForm({ onSubmit, onCancel, initialData }: ClassFormProps) {
   const [formData, setFormData] = useState({
-    className: initialData?.className || '',
-    members: initialData?.members ? JSON.stringify(initialData.members, null, 2) : '[]',
-    description: initialData?.description || '',
+    className: initialData?.className || "",
+    members: initialData?.members
+      ? JSON.stringify(initialData.members, null, 2)
+      : "[]",
+    description: initialData?.description || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,12 +52,14 @@ export function ClassForm({ onSubmit, onCancel, initialData }: ClassFormProps) {
         try {
           members = JSON.parse(formData.members);
         } catch (err) {
-          throw new Error('Invalid JSON in members field');
+          throw new Error("Invalid JSON in members field");
         }
       }
 
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_SENDMAIL_CLASS_MUTATION : CREATE_SENDMAIL_CLASS_MUTATION,
+        query: initialData
+          ? UPDATE_SENDMAIL_CLASS_MUTATION
+          : CREATE_SENDMAIL_CLASS_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -63,9 +70,11 @@ export function ClassForm({ onSubmit, onCancel, initialData }: ClassFormProps) {
         },
       });
 
-      onSubmit(response[initialData ? 'updateSendmailClass' : 'createSendmailClass']);
+      onSubmit(
+        response[initialData ? "updateSendmailClass" : "createSendmailClass"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save class');
+      setError(err instanceof Error ? err.message : "Failed to save class");
     } finally {
       setLoading(false);
     }
@@ -80,7 +89,11 @@ export function ClassForm({ onSubmit, onCancel, initialData }: ClassFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Class Name" required description="Name of the Sendmail class (e.g., local)">
+        <FormField
+          label="Class Name"
+          required
+          description="Name of the Sendmail class (e.g., local)"
+        >
           <Input
             name="className"
             value={formData.className}

@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_OPENDKIM_DOMAIN_MUTATION, UPDATE_OPENDKIM_DOMAIN_MUTATION } from '@/lib/graphql/opendkim';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_OPENDKIM_DOMAIN_MUTATION,
+  UPDATE_OPENDKIM_DOMAIN_MUTATION,
+} from "@/lib/graphql/opendkim";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface DomainFormProps {
   onSubmit: (data: any) => void;
@@ -12,13 +15,17 @@ interface DomainFormProps {
   initialData?: any;
 }
 
-export function DomainForm({ onSubmit, onCancel, initialData }: DomainFormProps) {
+export function DomainForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: DomainFormProps) {
   const [formData, setFormData] = useState({
-    domainName: initialData?.domainName || '',
-    selector: initialData?.selector || 'default',
-    keysign: initialData?.keysign || 'y',
-    keyfile: initialData?.keyfile || '',
-    iua: initialData?.iua || 'individual',
+    domainName: initialData?.domainName || "",
+    selector: initialData?.selector || "default",
+    keysign: initialData?.keysign || "y",
+    keyfile: initialData?.keyfile || "",
+    iua: initialData?.iua || "individual",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +44,9 @@ export function DomainForm({ onSubmit, onCancel, initialData }: DomainFormProps)
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_OPENDKIM_DOMAIN_MUTATION : CREATE_OPENDKIM_DOMAIN_MUTATION,
+        query: initialData
+          ? UPDATE_OPENDKIM_DOMAIN_MUTATION
+          : CREATE_OPENDKIM_DOMAIN_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -50,9 +59,11 @@ export function DomainForm({ onSubmit, onCancel, initialData }: DomainFormProps)
         },
       });
 
-      onSubmit(response[initialData ? 'updateOpenDkimDomain' : 'createOpenDkimDomain']);
+      onSubmit(
+        response[initialData ? "updateOpenDkimDomain" : "createOpenDkimDomain"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save domain');
+      setError(err instanceof Error ? err.message : "Failed to save domain");
     } finally {
       setLoading(false);
     }
@@ -67,7 +78,11 @@ export function DomainForm({ onSubmit, onCancel, initialData }: DomainFormProps)
       )}
 
       <div className="space-y-6">
-        <FormField label="Domain Name" required description="Domain to sign for">
+        <FormField
+          label="Domain Name"
+          required
+          description="Domain to sign for"
+        >
           <Input
             name="domainName"
             value={formData.domainName}

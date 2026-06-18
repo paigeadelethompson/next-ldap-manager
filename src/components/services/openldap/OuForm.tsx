@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_OU_MUTATION } from '@/lib/graphql/openldap';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import { CREATE_OU_MUTATION } from "@/lib/graphql/openldap";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface OuFormProps {
   onSubmit: (data: any) => void;
@@ -14,8 +14,8 @@ interface OuFormProps {
 
 export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
   const [formData, setFormData] = useState({
-    ou: initialData?.ou || '',
-    description: initialData?.description || '',
+    ou: initialData?.ou || "",
+    description: initialData?.description || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,7 +42,7 @@ export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
 
       onSubmit(response.createOpenLdapOu);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create OU');
+      setError(err instanceof Error ? err.message : "Failed to create OU");
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,11 @@ export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="OU Name" required description="Name of the organizational unit">
+        <FormField
+          label="OU Name"
+          required
+          description="Name of the organizational unit"
+        >
           <Input
             name="ou"
             value={formData.ou}

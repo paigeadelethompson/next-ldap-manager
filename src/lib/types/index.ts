@@ -38,7 +38,7 @@ export interface DeleteResult extends LdapOperationResult {}
 export interface EntryFilter {
   baseDN: string;
   filter: string;
-  scope?: 'base' | 'onelevel' | 'subtree';
+  scope?: "base" | "onelevel" | "subtree";
   attributes?: string[];
 }
 
@@ -54,7 +54,7 @@ export interface UpdateEntryInput {
 export interface LdapChange {
   attribute: string;
   values: unknown[];
-  operation: 'add' | 'replace' | 'delete';
+  operation: "add" | "replace" | "delete";
 }
 
 // Generic LDAP entry type (can be used across services)
@@ -64,11 +64,11 @@ export interface LdapEntry {
 }
 
 // Re-export service-specific types
-export * from './openldap';
-export * from './asterisk';
-export * from './freeradius';
-export * from './krb5';
-export * from './netcrave';
-export * from './opendkim';
-export * from './powerdns';
-export * from './sendmail';
+export * from "./openldap";
+export * from "./asterisk";
+export * from "./freeradius";
+export * from "./krb5";
+export * from "./netcrave";
+export * from "./opendkim";
+export * from "./powerdns";
+export * from "./sendmail";

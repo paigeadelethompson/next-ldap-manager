@@ -1,14 +1,14 @@
-import { Client, Change } from 'ldapts';
-import { LdapConfig, EntryFilter } from '@/lib/types';
+import { Client, Change } from "ldapts";
+import { LdapConfig, EntryFilter } from "@/lib/types";
 
-type LdapScope = 'base' | 'onelevel' | 'subtree';
+type LdapScope = "base" | "onelevel" | "subtree";
 
 // ldapts uses different scope naming
-function mapScope(scope: LdapScope): 'base' | 'children' | 'one' | 'sub' {
-  const mapping: Record<LdapScope, 'base' | 'children' | 'one' | 'sub'> = {
-    base: 'base',
-    onelevel: 'one',
-    subtree: 'sub',
+function mapScope(scope: LdapScope): "base" | "children" | "one" | "sub" {
+  const mapping: Record<LdapScope, "base" | "children" | "one" | "sub"> = {
+    base: "base",
+    onelevel: "one",
+    subtree: "sub",
   };
   return mapping[scope];
 }
@@ -30,7 +30,10 @@ export class LDAPClient {
     if (this.client) {
       try {
         // Attempt a simple operation to check connection
-        await this.client.search(this.config.bindDN, { filter: '(objectClass=*)', scope: 'base' });
+        await this.client.search(this.config.bindDN, {
+          filter: "(objectClass=*)",
+          scope: "base",
+        });
         return this.client;
       } catch {
         this.client = null;
@@ -51,24 +54,30 @@ export class LDAPClient {
     return this.client;
   }
 
-  async search<T = Record<string, unknown>>(filter: EntryFilter): Promise<SearchResult<T>[]> {
+  async search<T = Record<string, unknown>>(
+    filter: EntryFilter,
+  ): Promise<SearchResult<T>[]> {
     const client = await this.connect();
 
     try {
       const entries = await client.search(filter.baseDN, {
         filter: filter.filter,
-        scope: mapScope((filter.scope as LdapScope) || 'subtree'),
-        attributes: filter.attributes || ['*'],
+        scope: mapScope((filter.scope as LdapScope) || "subtree"),
+        attributes: filter.attributes || ["*"],
       });
 
       return entries as unknown as SearchResult<T>[];
     } catch (error) {
-      console.error('LDAP search error:', error);
-      throw new Error(`Search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("LDAP search error:", error);
+      throw new Error(
+        `Search failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
-  async searchOne<T = Record<string, unknown>>(filter: EntryFilter): Promise<SearchResult<T> | null> {
+  async searchOne<T = Record<string, unknown>>(
+    filter: EntryFilter,
+  ): Promise<SearchResult<T> | null> {
     const results = await this.search<T>(filter);
     return results.length > 0 ? results[0] : null;
   }
@@ -88,12 +97,21 @@ export class LDAPClient {
       }
       await client.add(dn, formattedAttrs);
     } catch (error) {
-      console.error('LDAP add error:', error);
-      throw new Error(`Add failed for DN ${dn}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("LDAP add error:", error);
+      throw new Error(
+        `Add failed for DN ${dn}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
-  async modify(dn: string, changes: { attribute: string; values: unknown[]; operation: 'add' | 'replace' | 'delete' }[]): Promise<void> {
+  async modify(
+    dn: string,
+    changes: {
+      attribute: string;
+      values: unknown[];
+      operation: "add" | "replace" | "delete";
+    }[],
+  ): Promise<void> {
     const client = await this.connect();
 
     try {
@@ -106,8 +124,10 @@ export class LDAPClient {
 
       await client.modify(dn, ldapChanges);
     } catch (error) {
-      console.error('LDAP modify error:', error);
-      throw new Error(`Modify failed for DN ${dn}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("LDAP modify error:", error);
+      throw new Error(
+        `Modify failed for DN ${dn}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -117,8 +137,10 @@ export class LDAPClient {
     try {
       await client.del(dn);
     } catch (error) {
-      console.error('LDAP delete error:', error);
-      throw new Error(`Delete failed for DN ${dn}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("LDAP delete error:", error);
+      throw new Error(
+        `Delete failed for DN ${dn}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -127,7 +149,7 @@ export class LDAPClient {
       const client = await this.connect();
       return true;
     } catch (error) {
-      console.error('LDAP connection test failed:', error);
+      console.error("LDAP connection test failed:", error);
       return false;
     }
   }
@@ -137,7 +159,7 @@ export class LDAPClient {
       try {
         await this.client.unbind();
       } catch (error) {
-        console.error('Error closing LDAP connection:', error);
+        console.error("Error closing LDAP connection:", error);
       }
       this.client = null;
     }

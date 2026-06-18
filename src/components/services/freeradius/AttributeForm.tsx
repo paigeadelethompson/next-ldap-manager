@@ -1,11 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_FREERADIUS_ATTRIBUTE_MUTATION, UPDATE_FREERADIUS_ATTRIBUTE_MUTATION } from '@/lib/graphql/freeradius';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
-import { Select } from '@/components/ui/Select';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_FREERADIUS_ATTRIBUTE_MUTATION,
+  UPDATE_FREERADIUS_ATTRIBUTE_MUTATION,
+} from "@/lib/graphql/freeradius";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
+import { Select } from "@/components/ui/Select";
 
 interface AttributeFormProps {
   onSubmit: (data: any) => void;
@@ -14,22 +17,26 @@ interface AttributeFormProps {
 }
 
 const OPERATORS = [
-  { value: ':=', label: 'Assign (:=)' },
-  { value: '+=', label: 'Add (+=)' },
-  { value: '==', label: 'Match (==)' },
-  { value: '!=', label: 'Not equal (!=)' },
-  { value: '<', label: 'Less than (<)' },
-  { value: '<=', label: 'Less or equal (<=)' },
-  { value: '>', label: 'Greater than (>)' },
-  { value: '>=', label: 'Greater or equal (>=)' },
+  { value: ":=", label: "Assign (:=)" },
+  { value: "+=", label: "Add (+=)" },
+  { value: "==", label: "Match (==)" },
+  { value: "!=", label: "Not equal (!=)" },
+  { value: "<", label: "Less than (<)" },
+  { value: "<=", label: "Less or equal (<=)" },
+  { value: ">", label: "Greater than (>)" },
+  { value: ">=", label: "Greater or equal (>=)" },
 ];
 
-export function AttributeForm({ onSubmit, onCancel, initialData }: AttributeFormProps) {
+export function AttributeForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: AttributeFormProps) {
   const [formData, setFormData] = useState({
-    username: initialData?.username || '',
-    attribute: initialData?.attribute || '',
-    operator: initialData?.operator || ':=',
-    value: initialData?.value || '',
+    username: initialData?.username || "",
+    attribute: initialData?.attribute || "",
+    operator: initialData?.operator || ":=",
+    value: initialData?.value || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -56,7 +63,9 @@ export function AttributeForm({ onSubmit, onCancel, initialData }: AttributeForm
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_FREERADIUS_ATTRIBUTE_MUTATION : CREATE_FREERADIUS_ATTRIBUTE_MUTATION,
+        query: initialData
+          ? UPDATE_FREERADIUS_ATTRIBUTE_MUTATION
+          : CREATE_FREERADIUS_ATTRIBUTE_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -68,9 +77,15 @@ export function AttributeForm({ onSubmit, onCancel, initialData }: AttributeForm
         },
       });
 
-      onSubmit(response[initialData ? 'updateFreeradiusAttribute' : 'createFreeradiusAttribute']);
+      onSubmit(
+        response[
+          initialData
+            ? "updateFreeradiusAttribute"
+            : "createFreeradiusAttribute"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save attribute');
+      setError(err instanceof Error ? err.message : "Failed to save attribute");
     } finally {
       setLoading(false);
     }
@@ -85,7 +100,11 @@ export function AttributeForm({ onSubmit, onCancel, initialData }: AttributeForm
       )}
 
       <div className="space-y-6">
-        <FormField label="Username" required description="User this attribute applies to">
+        <FormField
+          label="Username"
+          required
+          description="User this attribute applies to"
+        >
           <Input
             name="username"
             value={formData.username}
@@ -110,7 +129,7 @@ export function AttributeForm({ onSubmit, onCancel, initialData }: AttributeForm
             <Select
               options={OPERATORS}
               value={formData.operator}
-              onChange={(e) => handleSelectChange('operator', e.target.value)}
+              onChange={(e) => handleSelectChange("operator", e.target.value)}
             />
           </FormField>
 

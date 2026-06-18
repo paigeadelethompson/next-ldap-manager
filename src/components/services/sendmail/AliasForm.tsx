@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_SENDMAIL_ALIAS_MUTATION, UPDATE_SENDMAIL_ALIAS_MUTATION } from '@/lib/graphql/sendmail';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_SENDMAIL_ALIAS_MUTATION,
+  UPDATE_SENDMAIL_ALIAS_MUTATION,
+} from "@/lib/graphql/sendmail";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface AliasFormProps {
   onSubmit: (data: any) => void;
@@ -14,9 +17,9 @@ interface AliasFormProps {
 
 export function AliasForm({ onSubmit, onCancel, initialData }: AliasFormProps) {
   const [formData, setFormData] = useState({
-    maildrop: initialData?.maildrop || '',
-    mail: initialData?.mail || '',
-    description: initialData?.description || '',
+    maildrop: initialData?.maildrop || "",
+    mail: initialData?.mail || "",
+    description: initialData?.description || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,7 +38,9 @@ export function AliasForm({ onSubmit, onCancel, initialData }: AliasFormProps) {
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_SENDMAIL_ALIAS_MUTATION : CREATE_SENDMAIL_ALIAS_MUTATION,
+        query: initialData
+          ? UPDATE_SENDMAIL_ALIAS_MUTATION
+          : CREATE_SENDMAIL_ALIAS_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -46,9 +51,11 @@ export function AliasForm({ onSubmit, onCancel, initialData }: AliasFormProps) {
         },
       });
 
-      onSubmit(response[initialData ? 'updateSendmailAlias' : 'createSendmailAlias']);
+      onSubmit(
+        response[initialData ? "updateSendmailAlias" : "createSendmailAlias"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save alias');
+      setError(err instanceof Error ? err.message : "Failed to save alias");
     } finally {
       setLoading(false);
     }
@@ -63,7 +70,11 @@ export function AliasForm({ onSubmit, onCancel, initialData }: AliasFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Maildrop (Target)" required description="Where emails should be forwarded">
+        <FormField
+          label="Maildrop (Target)"
+          required
+          description="Where emails should be forwarded"
+        >
           <Input
             name="maildrop"
             value={formData.maildrop}

@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_SENDMAIL_MAP_MUTATION, UPDATE_SENDMAIL_MAP_MUTATION } from '@/lib/graphql/sendmail';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_SENDMAIL_MAP_MUTATION,
+  UPDATE_SENDMAIL_MAP_MUTATION,
+} from "@/lib/graphql/sendmail";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface MapFormProps {
   onSubmit: (data: any) => void;
@@ -14,10 +17,10 @@ interface MapFormProps {
 
 export function MapForm({ onSubmit, onCancel, initialData }: MapFormProps) {
   const [formData, setFormData] = useState({
-    mapName: initialData?.mapName || '',
-    key: initialData?.key || '',
-    value: initialData?.value || '',
-    description: initialData?.description || '',
+    mapName: initialData?.mapName || "",
+    key: initialData?.key || "",
+    value: initialData?.value || "",
+    description: initialData?.description || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,7 +39,9 @@ export function MapForm({ onSubmit, onCancel, initialData }: MapFormProps) {
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_SENDMAIL_MAP_MUTATION : CREATE_SENDMAIL_MAP_MUTATION,
+        query: initialData
+          ? UPDATE_SENDMAIL_MAP_MUTATION
+          : CREATE_SENDMAIL_MAP_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -48,9 +53,11 @@ export function MapForm({ onSubmit, onCancel, initialData }: MapFormProps) {
         },
       });
 
-      onSubmit(response[initialData ? 'updateSendmailMap' : 'createSendmailMap']);
+      onSubmit(
+        response[initialData ? "updateSendmailMap" : "createSendmailMap"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save map entry');
+      setError(err instanceof Error ? err.message : "Failed to save map entry");
     } finally {
       setLoading(false);
     }
@@ -65,7 +72,11 @@ export function MapForm({ onSubmit, onCancel, initialData }: MapFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Map Name" required description="Name of the sendmail map (e.g., relay-domains)">
+        <FormField
+          label="Map Name"
+          required
+          description="Name of the sendmail map (e.g., relay-domains)"
+        >
           <Input
             name="mapName"
             value={formData.mapName}

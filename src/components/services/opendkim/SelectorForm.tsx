@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_OPENDKIM_SELECTOR_MUTATION, UPDATE_OPENDKIM_SELECTOR_MUTATION } from '@/lib/graphql/opendkim';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_OPENDKIM_SELECTOR_MUTATION,
+  UPDATE_OPENDKIM_SELECTOR_MUTATION,
+} from "@/lib/graphql/opendkim";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface SelectorFormProps {
   onSubmit: (data: any) => void;
@@ -12,16 +15,26 @@ interface SelectorFormProps {
   initialData?: any;
 }
 
-export function SelectorForm({ onSubmit, onCancel, initialData }: SelectorFormProps) {
+export function SelectorForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: SelectorFormProps) {
   const [formData, setFormData] = useState({
-    selectorName: initialData?.selectorName || '',
-    domain: initialData?.domain || '',
-    keyFile: initialData?.keyFile || '/etc/opendkim/keys/domain.com/default.private',
-    key: initialData?.key || '',
-    canonicHeaders: initialData?.canonicHeaders || 'relaxed',
-    canonicBody: initialData?.canonicBody || 'relaxed',
-    signAlgorithm: initialData?.signAlgorithm || 'rsa-sha256',
-    subDomains: initialData?.subDomains !== undefined ? (initialData.subDomains ? 'true' : 'false') : 'false',
+    selectorName: initialData?.selectorName || "",
+    domain: initialData?.domain || "",
+    keyFile:
+      initialData?.keyFile || "/etc/opendkim/keys/domain.com/default.private",
+    key: initialData?.key || "",
+    canonicHeaders: initialData?.canonicHeaders || "relaxed",
+    canonicBody: initialData?.canonicBody || "relaxed",
+    signAlgorithm: initialData?.signAlgorithm || "rsa-sha256",
+    subDomains:
+      initialData?.subDomains !== undefined
+        ? initialData.subDomains
+          ? "true"
+          : "false"
+        : "false",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,7 +53,9 @@ export function SelectorForm({ onSubmit, onCancel, initialData }: SelectorFormPr
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_OPENDKIM_SELECTOR_MUTATION : CREATE_OPENDKIM_SELECTOR_MUTATION,
+        query: initialData
+          ? UPDATE_OPENDKIM_SELECTOR_MUTATION
+          : CREATE_OPENDKIM_SELECTOR_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -51,14 +66,18 @@ export function SelectorForm({ onSubmit, onCancel, initialData }: SelectorFormPr
             canonicHeaders: formData.canonicHeaders,
             canonicBody: formData.canonicBody,
             signAlgorithm: formData.signAlgorithm,
-            subDomains: formData.subDomains === 'true',
+            subDomains: formData.subDomains === "true",
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateOpenDkimSelector' : 'createOpenDkimSelector']);
+      onSubmit(
+        response[
+          initialData ? "updateOpenDkimSelector" : "createOpenDkimSelector"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save selector');
+      setError(err instanceof Error ? err.message : "Failed to save selector");
     } finally {
       setLoading(false);
     }

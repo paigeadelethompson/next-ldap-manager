@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { SelectHTMLAttributes, forwardRef } from 'react';
-import { cn } from '@/lib/utils';
+import { SelectHTMLAttributes, forwardRef } from "react";
+import { cn } from "@/lib/utils";
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options?: Array<{ value: string; label: string }>;
@@ -13,8 +13,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
       <div className="relative w-full">
         <select
           className={cn(
-            'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50',
-            className
+            "w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50",
+            className,
           )}
           ref={ref}
           {...props}
@@ -28,9 +28,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </select>
       </div>
     );
-  }
+  },
 );
 
-Select.displayName = 'Select';
+Select.displayName = "Select";
 
 export { Select };

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
 import {
   ISSUE_NETCRAVE_CERTIFICATE_MUTATION,
   REVOKE_NETCRAVE_CERTIFICATE_MUTATION,
   RESTORE_NETCRAVE_CERTIFICATE_MUTATION,
-} from '@/lib/graphql/netcrave';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+} from "@/lib/graphql/netcrave";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface CertificateFormProps {
   onSubmit: (data: any) => void;
@@ -16,12 +16,18 @@ interface CertificateFormProps {
   initialData?: any;
 }
 
-export function CertificateForm({ onSubmit, onCancel, initialData }: CertificateFormProps) {
+export function CertificateForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: CertificateFormProps) {
   const [formData, setFormData] = useState({
-    templateDn: initialData?.templateDn || '',
-    cn: initialData?.cn || '',
-    san: initialData?.san ? JSON.stringify(initialData.san, null, 2) : '',
-    validityDays: initialData?.validityDays ? String(initialData.validityDays) : '365',
+    templateDn: initialData?.templateDn || "",
+    cn: initialData?.cn || "",
+    san: initialData?.san ? JSON.stringify(initialData.san, null, 2) : "",
+    validityDays: initialData?.validityDays
+      ? String(initialData.validityDays)
+      : "365",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,27 +58,37 @@ export function CertificateForm({ onSubmit, onCancel, initialData }: Certificate
         try {
           san = JSON.parse(formData.san);
         } catch (err) {
-          throw new Error('Invalid JSON in SAN field');
+          throw new Error("Invalid JSON in SAN field");
         }
       }
 
       const response = await graphqlRequest({
-        query: initialData ? REVOKE_NETCRAVE_CERTIFICATE_MUTATION : ISSUE_NETCRAVE_CERTIFICATE_MUTATION,
+        query: initialData
+          ? REVOKE_NETCRAVE_CERTIFICATE_MUTATION
+          : ISSUE_NETCRAVE_CERTIFICATE_MUTATION,
         variables: {
           input: {
             templateDn: formData.templateDn,
             cn: formData.cn,
             san,
-            validityDays: formData.validityDays ? parseInt(formData.validityDays, 10) : undefined,
+            validityDays: formData.validityDays
+              ? parseInt(formData.validityDays, 10)
+              : undefined,
           },
           dn: initialData?.dn,
-          reason: 'complianceRevoked',
+          reason: "complianceRevoked",
         },
       });
 
-      onSubmit(response[initialData ? 'revokeNetcraveCertificate' : 'issueNetcraveCertificate']);
+      onSubmit(
+        response[
+          initialData ? "revokeNetcraveCertificate" : "issueNetcraveCertificate"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to process certificate');
+      setError(
+        err instanceof Error ? err.message : "Failed to process certificate",
+      );
     } finally {
       setLoading(false);
     }
@@ -89,7 +105,11 @@ export function CertificateForm({ onSubmit, onCancel, initialData }: Certificate
       <div className="space-y-6">
         {!initialData && (
           <>
-            <FormField label="Template DN" required description="Distinguished name of the certificate template">
+            <FormField
+              label="Template DN"
+              required
+              description="Distinguished name of the certificate template"
+            >
               <Input
                 name="templateDn"
                 value={formData.templateDn}
@@ -116,7 +136,7 @@ export function CertificateForm({ onSubmit, onCancel, initialData }: Certificate
             <select
               name="action"
               onChange={(e) => {
-                if (e.target.value === 'restore') {
+                if (e.target.value === "restore") {
                   onSubmit({ cn: formData.cn, dn: initialData.dn });
                 }
               }}

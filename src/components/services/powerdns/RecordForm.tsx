@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_POWERDNS_RECORD_MUTATION, UPDATE_POWERDNS_RECORD_MUTATION } from '@/lib/graphql/powerdns';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_POWERDNS_RECORD_MUTATION,
+  UPDATE_POWERDNS_RECORD_MUTATION,
+} from "@/lib/graphql/powerdns";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface RecordFormProps {
   onSubmit: (data: any) => void;
@@ -12,15 +15,24 @@ interface RecordFormProps {
   initialData?: any;
 }
 
-export function RecordForm({ onSubmit, onCancel, initialData }: RecordFormProps) {
+export function RecordForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: RecordFormProps) {
   const [formData, setFormData] = useState({
-    zoneName: initialData?.zoneName || '',
-    name: initialData?.name || '',
-    type: initialData?.type || 'A',
-    ttl: initialData?.ttl ? String(initialData.ttl) : '86400',
-    priority: initialData?.priority ? String(initialData.priority) : '',
-    content: initialData?.content || '',
-    disabled: initialData?.disabled !== undefined ? (initialData.disabled ? 'true' : 'false') : 'false',
+    zoneName: initialData?.zoneName || "",
+    name: initialData?.name || "",
+    type: initialData?.type || "A",
+    ttl: initialData?.ttl ? String(initialData.ttl) : "86400",
+    priority: initialData?.priority ? String(initialData.priority) : "",
+    content: initialData?.content || "",
+    disabled:
+      initialData?.disabled !== undefined
+        ? initialData.disabled
+          ? "true"
+          : "false"
+        : "false",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,7 +51,9 @@ export function RecordForm({ onSubmit, onCancel, initialData }: RecordFormProps)
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_POWERDNS_RECORD_MUTATION : CREATE_POWERDNS_RECORD_MUTATION,
+        query: initialData
+          ? UPDATE_POWERDNS_RECORD_MUTATION
+          : CREATE_POWERDNS_RECORD_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -47,16 +61,20 @@ export function RecordForm({ onSubmit, onCancel, initialData }: RecordFormProps)
             name: formData.name,
             type: formData.type,
             ttl: formData.ttl ? parseInt(formData.ttl, 10) : undefined,
-            priority: formData.priority ? parseInt(formData.priority, 10) : undefined,
+            priority: formData.priority
+              ? parseInt(formData.priority, 10)
+              : undefined,
             content: formData.content,
-            disabled: formData.disabled === 'true',
+            disabled: formData.disabled === "true",
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updatePowerdnsRecord' : 'createPowerdnsRecord']);
+      onSubmit(
+        response[initialData ? "updatePowerdnsRecord" : "createPowerdnsRecord"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save record');
+      setError(err instanceof Error ? err.message : "Failed to save record");
     } finally {
       setLoading(false);
     }
@@ -72,7 +90,11 @@ export function RecordForm({ onSubmit, onCancel, initialData }: RecordFormProps)
 
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
-          <FormField label="Zone Name" required description="Parent zone for the record (e.g., example.com)">
+          <FormField
+            label="Zone Name"
+            required
+            description="Parent zone for the record (e.g., example.com)"
+          >
             <Input
               name="zoneName"
               value={formData.zoneName}
@@ -127,7 +149,7 @@ export function RecordForm({ onSubmit, onCancel, initialData }: RecordFormProps)
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          {['MX', 'SRV'].includes(formData.type) && (
+          {["MX", "SRV"].includes(formData.type) && (
             <FormField label="Priority">
               <Input
                 name="priority"

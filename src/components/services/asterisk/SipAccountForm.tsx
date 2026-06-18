@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_ASTERISK_SIP_ACCOUNT_MUTATION, UPDATE_ASTERISK_SIP_ACCOUNT_MUTATION } from '@/lib/graphql/asterisk';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_ASTERISK_SIP_ACCOUNT_MUTATION,
+  UPDATE_ASTERISK_SIP_ACCOUNT_MUTATION,
+} from "@/lib/graphql/asterisk";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface SipAccountFormProps {
   onSubmit: (data: any) => void;
@@ -12,27 +15,31 @@ interface SipAccountFormProps {
   initialData?: any;
 }
 
-export function SipAccountForm({ onSubmit, onCancel, initialData }: SipAccountFormProps) {
+export function SipAccountForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: SipAccountFormProps) {
   const [formData, setFormData] = useState({
-    accountid: initialData?.accountid || '',
-    secret: initialData?.secret || '',
-    context: initialData?.context || 'default',
-    host: initialData?.host || '',
-    nat: initialData?.nat || 'yes',
-    type: initialData?.type || 'friend',
-    allow: initialData?.allow || 'g729,g711',
-    disallow: initialData?.disallow || 'all',
-    dtmfmode: initialData?.dtmfmode || 'rfc2833',
-    canreinvite: initialData?.canreinvite || 'no',
-    callgroup: initialData?.callgroup || '',
-    pickupgroup: initialData?.pickupgroup || '',
-    mailbox: initialData?.mailbox || '',
-    callerid: initialData?.callerid || '',
-    trustrdn: initialData?.trustrdn || 'yes',
-    rmip: initialData?.rmip || '',
-    regseconds: initialData?.regseconds ? String(initialData.regseconds) : '',
-    ipaddr: initialData?.ipaddr || '',
-    cpeflags: initialData?.cpeflags || '',
+    accountid: initialData?.accountid || "",
+    secret: initialData?.secret || "",
+    context: initialData?.context || "default",
+    host: initialData?.host || "",
+    nat: initialData?.nat || "yes",
+    type: initialData?.type || "friend",
+    allow: initialData?.allow || "g729,g711",
+    disallow: initialData?.disallow || "all",
+    dtmfmode: initialData?.dtmfmode || "rfc2833",
+    canreinvite: initialData?.canreinvite || "no",
+    callgroup: initialData?.callgroup || "",
+    pickupgroup: initialData?.pickupgroup || "",
+    mailbox: initialData?.mailbox || "",
+    callerid: initialData?.callerid || "",
+    trustrdn: initialData?.trustrdn || "yes",
+    rmip: initialData?.rmip || "",
+    regseconds: initialData?.regseconds ? String(initialData.regseconds) : "",
+    ipaddr: initialData?.ipaddr || "",
+    cpeflags: initialData?.cpeflags || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,7 +58,9 @@ export function SipAccountForm({ onSubmit, onCancel, initialData }: SipAccountFo
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_ASTERISK_SIP_ACCOUNT_MUTATION : CREATE_ASTERISK_SIP_ACCOUNT_MUTATION,
+        query: initialData
+          ? UPDATE_ASTERISK_SIP_ACCOUNT_MUTATION
+          : CREATE_ASTERISK_SIP_ACCOUNT_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -71,16 +80,24 @@ export function SipAccountForm({ onSubmit, onCancel, initialData }: SipAccountFo
             callerid: formData.callerid,
             trustrdn: formData.trustrdn,
             rmip: formData.rmip,
-            regseconds: formData.regseconds ? parseInt(formData.regseconds, 10) : undefined,
+            regseconds: formData.regseconds
+              ? parseInt(formData.regseconds, 10)
+              : undefined,
             ipaddr: formData.ipaddr,
             cpeflags: formData.cpeflags,
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateAsteriskSipAccount' : 'createAsteriskSipAccount']);
+      onSubmit(
+        response[
+          initialData ? "updateAsteriskSipAccount" : "createAsteriskSipAccount"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save SIP account');
+      setError(
+        err instanceof Error ? err.message : "Failed to save SIP account",
+      );
     } finally {
       setLoading(false);
     }
@@ -95,7 +112,11 @@ export function SipAccountForm({ onSubmit, onCancel, initialData }: SipAccountFo
       )}
 
       <div className="space-y-6">
-        <FormField label="Account ID" required description="SIP account username/extension">
+        <FormField
+          label="Account ID"
+          required
+          description="SIP account username/extension"
+        >
           <Input
             name="accountid"
             value={formData.accountid}

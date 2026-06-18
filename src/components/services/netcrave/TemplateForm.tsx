@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_NETCRAVE_TEMPLATE_MUTATION, UPDATE_NETCRAVE_TEMPLATE_MUTATION } from '@/lib/graphql/netcrave';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_NETCRAVE_TEMPLATE_MUTATION,
+  UPDATE_NETCRAVE_TEMPLATE_MUTATION,
+} from "@/lib/graphql/netcrave";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface TemplateFormProps {
   onSubmit: (data: any) => void;
@@ -12,15 +15,23 @@ interface TemplateFormProps {
   initialData?: any;
 }
 
-export function TemplateForm({ onSubmit, onCancel, initialData }: TemplateFormProps) {
+export function TemplateForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: TemplateFormProps) {
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    description: initialData?.description || '',
-    subject: initialData?.subject || '/CN=certificate',
-    keyType: initialData?.keyType || 'RSA',
-    keySize: initialData?.keySize ? String(initialData.keySize) : '2048',
-    validityDays: initialData?.validityDays ? String(initialData.validityDays) : '365',
-    extensions: initialData?.extensions ? JSON.stringify(initialData.extensions, null, 2) : '',
+    name: initialData?.name || "",
+    description: initialData?.description || "",
+    subject: initialData?.subject || "/CN=certificate",
+    keyType: initialData?.keyType || "RSA",
+    keySize: initialData?.keySize ? String(initialData.keySize) : "2048",
+    validityDays: initialData?.validityDays
+      ? String(initialData.validityDays)
+      : "365",
+    extensions: initialData?.extensions
+      ? JSON.stringify(initialData.extensions, null, 2)
+      : "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,12 +62,14 @@ export function TemplateForm({ onSubmit, onCancel, initialData }: TemplateFormPr
         try {
           extensions = JSON.parse(formData.extensions);
         } catch (err) {
-          throw new Error('Invalid JSON in extensions field');
+          throw new Error("Invalid JSON in extensions field");
         }
       }
 
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_NETCRAVE_TEMPLATE_MUTATION : CREATE_NETCRAVE_TEMPLATE_MUTATION,
+        query: initialData
+          ? UPDATE_NETCRAVE_TEMPLATE_MUTATION
+          : CREATE_NETCRAVE_TEMPLATE_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -64,16 +77,24 @@ export function TemplateForm({ onSubmit, onCancel, initialData }: TemplateFormPr
             description: formData.description,
             subject: formData.subject,
             keyType: formData.keyType,
-            keySize: formData.keySize ? parseInt(formData.keySize, 10) : undefined,
-            validityDays: formData.validityDays ? parseInt(formData.validityDays, 10) : undefined,
+            keySize: formData.keySize
+              ? parseInt(formData.keySize, 10)
+              : undefined,
+            validityDays: formData.validityDays
+              ? parseInt(formData.validityDays, 10)
+              : undefined,
             extensions,
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateNetcraveTemplate' : 'createNetcraveTemplate']);
+      onSubmit(
+        response[
+          initialData ? "updateNetcraveTemplate" : "createNetcraveTemplate"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save template');
+      setError(err instanceof Error ? err.message : "Failed to save template");
     } finally {
       setLoading(false);
     }
@@ -88,7 +109,11 @@ export function TemplateForm({ onSubmit, onCancel, initialData }: TemplateFormPr
       )}
 
       <div className="space-y-6">
-        <FormField label="Template Name" required description="Name of the certificate template">
+        <FormField
+          label="Template Name"
+          required
+          description="Name of the certificate template"
+        >
           <Input
             name="name"
             value={formData.name}

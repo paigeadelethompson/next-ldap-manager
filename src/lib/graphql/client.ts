@@ -5,10 +5,12 @@ interface GraphqlRequestOptions {
   variables?: Record<string, unknown>;
 }
 
-export async function graphqlRequest<T = any>(options: GraphqlRequestOptions): Promise<T> {
-  const response = await fetch('/api/graphql', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+export async function graphqlRequest<T = any>(
+  options: GraphqlRequestOptions,
+): Promise<T> {
+  const response = await fetch("/api/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       query: options.query,
       variables: options.variables,

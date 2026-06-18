@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_ASTERISK_VOICEMAIL_MUTATION, UPDATE_ASTERISK_VOICEMAIL_MUTATION } from '@/lib/graphql/asterisk';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_ASTERISK_VOICEMAIL_MUTATION,
+  UPDATE_ASTERISK_VOICEMAIL_MUTATION,
+} from "@/lib/graphql/asterisk";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface VoicemailFormProps {
   onSubmit: (data: any) => void;
@@ -12,19 +15,23 @@ interface VoicemailFormProps {
   initialData?: any;
 }
 
-export function VoicemailForm({ onSubmit, onCancel, initialData }: VoicemailFormProps) {
+export function VoicemailForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: VoicemailFormProps) {
   const [formData, setFormData] = useState({
-    uniqueid: initialData?.uniqueid || '',
-    password: initialData?.password || '',
-    fullname: initialData?.fullname || '',
-    email: initialData?.email || '',
-    pager: initialData?.pager || '',
-    attach: initialData?.attach || 'yes',
-    tz: initialData?.tz || '',
-    dialout: initialData?.dialout || '',
-    context: initialData?.context || 'default',
-    exten: initialData?.exten || '',
-    emergency_context: initialData?.emergency_context || '',
+    uniqueid: initialData?.uniqueid || "",
+    password: initialData?.password || "",
+    fullname: initialData?.fullname || "",
+    email: initialData?.email || "",
+    pager: initialData?.pager || "",
+    attach: initialData?.attach || "yes",
+    tz: initialData?.tz || "",
+    dialout: initialData?.dialout || "",
+    context: initialData?.context || "default",
+    exten: initialData?.exten || "",
+    emergency_context: initialData?.emergency_context || "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -43,7 +50,9 @@ export function VoicemailForm({ onSubmit, onCancel, initialData }: VoicemailForm
 
     try {
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_ASTERISK_VOICEMAIL_MUTATION : CREATE_ASTERISK_VOICEMAIL_MUTATION,
+        query: initialData
+          ? UPDATE_ASTERISK_VOICEMAIL_MUTATION
+          : CREATE_ASTERISK_VOICEMAIL_MUTATION,
         variables: {
           uniqueid: initialData?.uniqueid,
           input: {
@@ -62,9 +71,13 @@ export function VoicemailForm({ onSubmit, onCancel, initialData }: VoicemailForm
         },
       });
 
-      onSubmit(response[initialData ? 'updateAsteriskVoicemail' : 'createAsteriskVoicemail']);
+      onSubmit(
+        response[
+          initialData ? "updateAsteriskVoicemail" : "createAsteriskVoicemail"
+        ],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save voicemail');
+      setError(err instanceof Error ? err.message : "Failed to save voicemail");
     } finally {
       setLoading(false);
     }
@@ -79,7 +92,11 @@ export function VoicemailForm({ onSubmit, onCancel, initialData }: VoicemailForm
       )}
 
       <div className="space-y-6">
-        <FormField label="Unique ID (User)" required description="Voicemail box number/user">
+        <FormField
+          label="Unique ID (User)"
+          required
+          description="Voicemail box number/user"
+        >
           <Input
             name="uniqueid"
             value={formData.uniqueid}

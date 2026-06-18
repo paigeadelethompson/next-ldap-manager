@@ -1,15 +1,34 @@
-'use client';
+"use client";
 
-import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Loading } from '@/components/ui/Loading';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
-import { getServiceConfig } from '@/lib/services';
-import { graphqlRequest } from '@/lib/graphql/client';
+import { useEffect, useState, use } from "react";
+import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Loading } from "@/components/ui/Loading";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
+import { getServiceConfig } from "@/lib/services";
+import { graphqlRequest } from "@/lib/graphql/client";
 
-type EntryType = 'user' | 'group' | 'ou' | 'record' | 'zone' | 'extension' | 'trunk' | 'principal' | 'realm' | 'domain' | 'key' | 'alias';
+type EntryType =
+  | "user"
+  | "group"
+  | "ou"
+  | "record"
+  | "zone"
+  | "extension"
+  | "trunk"
+  | "principal"
+  | "realm"
+  | "domain"
+  | "key"
+  | "alias";
 
 interface ServiceEntry {
   dn: string;
@@ -45,16 +64,19 @@ export default function ServicePage({
       setError(null);
 
       try {
-        const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+        const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
 
         // Determine filter based on service
-        let filter = '(objectClass=*)';
-        if (resolvedParams.service === 'openldap') {
-          filter = '(objectClass=posixAccount)';
+        let filter = "(objectClass=*)";
+        if (resolvedParams.service === "openldap") {
+          filter = "(objectClass=posixAccount)";
         }
 
         const result = await graphqlRequest<{
-          ldapEntries?: Array<{ dn: string; attributes: Record<string, unknown> }>;
+          ldapEntries?: Array<{
+            dn: string;
+            attributes: Record<string, unknown>;
+          }>;
         }>({
           query: `
             query($baseDN: String!, $filter: String) {
@@ -69,8 +91,8 @@ export default function ServicePage({
 
         setEntries(result?.ldapEntries ?? []);
       } catch (err) {
-        console.error('Error fetching entries:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load entries');
+        console.error("Error fetching entries:", err);
+        setError(err instanceof Error ? err.message : "Failed to load entries");
       } finally {
         setLoading(false);
       }
@@ -79,7 +101,10 @@ export default function ServicePage({
     fetchEntries();
   }, [resolvedParams.service]);
 
-  const renderEntriesTable = (entries: ServiceEntry[], columns: { header: string; key: string }[]) => {
+  const renderEntriesTable = (
+    entries: ServiceEntry[],
+    columns: { header: string; key: string }[],
+  ) => {
     if (entries.length === 0) {
       return (
         <div className="py-16 text-center">
@@ -102,14 +127,16 @@ export default function ServicePage({
             <TableRow key={entry.dn}>
               <TableCell className="font-medium">{entry.dn}</TableCell>
               {columns.slice(1).map((col) => {
-                const value = (entry.attributes as Record<string, unknown>)[col.key];
+                const value = (entry.attributes as Record<string, unknown>)[
+                  col.key
+                ];
                 return (
                   <TableCell key={`${entry.dn}-${col.key}`}>
                     {Array.isArray(value)
-                      ? value.join(', ')
-                      : typeof value === 'object'
-                      ? JSON.stringify(value)
-                      : String(value ?? '')}
+                      ? value.join(", ")
+                      : typeof value === "object"
+                        ? JSON.stringify(value)
+                        : String(value ?? "")}
                   </TableCell>
                 );
               })}
@@ -122,31 +149,31 @@ export default function ServicePage({
 
   const getTableColumns = (type: EntryType) => {
     switch (type) {
-      case 'user':
+      case "user":
         return [
-          { header: 'DN', key: 'dn' },
-          { header: 'Common Name', key: 'cn' },
-          { header: 'UID', key: 'uid' },
-          { header: 'Email', key: 'mail' },
+          { header: "DN", key: "dn" },
+          { header: "Common Name", key: "cn" },
+          { header: "UID", key: "uid" },
+          { header: "Email", key: "mail" },
         ];
-      case 'group':
+      case "group":
         return [
-          { header: 'DN', key: 'dn' },
-          { header: 'Name', key: 'cn' },
-          { header: 'GID', key: 'gidNumber' },
-          { header: 'Members', key: 'memberUid' },
+          { header: "DN", key: "dn" },
+          { header: "Name", key: "cn" },
+          { header: "GID", key: "gidNumber" },
+          { header: "Members", key: "memberUid" },
         ];
-      case 'ou':
+      case "ou":
         return [
-          { header: 'DN', key: 'dn' },
-          { header: 'OU Name', key: 'ou' },
-          { header: 'Description', key: 'description' },
+          { header: "DN", key: "dn" },
+          { header: "OU Name", key: "ou" },
+          { header: "Description", key: "description" },
         ];
       default:
         return [
-          { header: 'DN', key: 'dn' },
-          { header: 'Name', key: 'name' },
-          { header: 'Value', key: 'value' },
+          { header: "DN", key: "dn" },
+          { header: "Name", key: "name" },
+          { header: "Value", key: "value" },
         ];
     }
   };
@@ -156,12 +183,22 @@ export default function ServicePage({
       {/* Page Header */}
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{serviceConfig.label}</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage {serviceConfig.label} entries</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {serviceConfig.label}
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage {serviceConfig.label} entries
+          </p>
         </div>
         <div className="flex gap-3">
           {serviceConfig.entryTypes.map((type) => (
-            <Button key={type} variant="secondary" onClick={() => router.push(`/${resolvedParams.service}/new?entryType=${type}`)}>
+            <Button
+              key={type}
+              variant="secondary"
+              onClick={() =>
+                router.push(`/${resolvedParams.service}/new?entryType=${type}`)
+              }
+            >
               + Create {type.charAt(0).toUpperCase() + type.slice(1)}
             </Button>
           ))}
@@ -177,7 +214,10 @@ export default function ServicePage({
             <p className="text-red-600">{error}</p>
           </div>
         ) : (
-          renderEntriesTable(entries, getTableColumns(serviceConfig.entryTypes[0]))
+          renderEntriesTable(
+            entries,
+            getTableColumns(serviceConfig.entryTypes[0]),
+          )
         )}
       </Card>
     </div>

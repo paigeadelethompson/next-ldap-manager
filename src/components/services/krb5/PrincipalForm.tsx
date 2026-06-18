@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
 import {
   CREATE_KRB5_PRINCIPAL_MUTATION,
   UPDATE_KRB5_PRINCIPAL_MUTATION,
   RESET_KRB5_PRINCIPAL_PASSWORD_MUTATION,
-} from '@/lib/graphql/krb5';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+} from "@/lib/graphql/krb5";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface PrincipalFormProps {
   onSubmit: (data: any) => void;
@@ -16,12 +16,16 @@ interface PrincipalFormProps {
   initialData?: any;
 }
 
-export function PrincipalForm({ onSubmit, onCancel, initialData }: PrincipalFormProps) {
+export function PrincipalForm({
+  onSubmit,
+  onCancel,
+  initialData,
+}: PrincipalFormProps) {
   const [formData, setFormData] = useState({
-    principalName: initialData?.principalName || '',
-    realm: initialData?.realm || '',
-    password: '',
-    flags: initialData?.flags ? JSON.stringify(initialData.flags, null, 2) : '',
+    principalName: initialData?.principalName || "",
+    realm: initialData?.realm || "",
+    password: "",
+    flags: initialData?.flags ? JSON.stringify(initialData.flags, null, 2) : "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,12 +56,14 @@ export function PrincipalForm({ onSubmit, onCancel, initialData }: PrincipalForm
         try {
           flags = JSON.parse(formData.flags);
         } catch (err) {
-          throw new Error('Invalid JSON in flags field');
+          throw new Error("Invalid JSON in flags field");
         }
       }
 
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_KRB5_PRINCIPAL_MUTATION : CREATE_KRB5_PRINCIPAL_MUTATION,
+        query: initialData
+          ? UPDATE_KRB5_PRINCIPAL_MUTATION
+          : CREATE_KRB5_PRINCIPAL_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
@@ -69,9 +75,11 @@ export function PrincipalForm({ onSubmit, onCancel, initialData }: PrincipalForm
         },
       });
 
-      onSubmit(response[initialData ? 'updateKrb5Principal' : 'createKrb5Principal']);
+      onSubmit(
+        response[initialData ? "updateKrb5Principal" : "createKrb5Principal"],
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save principal');
+      setError(err instanceof Error ? err.message : "Failed to save principal");
     } finally {
       setLoading(false);
     }
@@ -86,7 +94,11 @@ export function PrincipalForm({ onSubmit, onCancel, initialData }: PrincipalForm
       )}
 
       <div className="space-y-6">
-        <FormField label="Principal Name" required description="Principal name (e.g., user@EXAMPLE.COM)">
+        <FormField
+          label="Principal Name"
+          required
+          description="Principal name (e.g., user@EXAMPLE.COM)"
+        >
           <Input
             name="principalName"
             value={formData.principalName}

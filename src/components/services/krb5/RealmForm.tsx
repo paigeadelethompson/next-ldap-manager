@@ -1,10 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { graphqlRequest } from '@/lib/graphql/client';
-import { CREATE_KRB5_REALM_MUTATION, UPDATE_KRB5_REALM_MUTATION } from '@/lib/graphql/krb5';
-import { Input } from '@/components/ui/Input';
-import { FormField } from '@/components/ui/FormField';
+import { useState } from "react";
+import { graphqlRequest } from "@/lib/graphql/client";
+import {
+  CREATE_KRB5_REALM_MUTATION,
+  UPDATE_KRB5_REALM_MUTATION,
+} from "@/lib/graphql/krb5";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 
 interface RealmFormProps {
   onSubmit: (data: any) => void;
@@ -14,11 +17,13 @@ interface RealmFormProps {
 
 export function RealmForm({ onSubmit, onCancel, initialData }: RealmFormProps) {
   const [formData, setFormData] = useState({
-    realmName: initialData?.realmName || '',
-    masterKeyName: initialData?.masterKeyName || 'kadmin/changepw',
-    supportedKas: initialData?.supportedKas ? JSON.stringify(initialData.supportedKas, null, 2) : '["kdc", "kadmin"]',
-    maxLife: initialData?.maxLife ? String(initialData.maxLife) : '86400',
-    maxRenew: initialData?.maxRenew ? String(initialData.maxRenew) : '604800',
+    realmName: initialData?.realmName || "",
+    masterKeyName: initialData?.masterKeyName || "kadmin/changepw",
+    supportedKas: initialData?.supportedKas
+      ? JSON.stringify(initialData.supportedKas, null, 2)
+      : '["kdc", "kadmin"]',
+    maxLife: initialData?.maxLife ? String(initialData.maxLife) : "86400",
+    maxRenew: initialData?.maxRenew ? String(initialData.maxRenew) : "604800",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -49,27 +54,33 @@ export function RealmForm({ onSubmit, onCancel, initialData }: RealmFormProps) {
         try {
           supportedKas = JSON.parse(formData.supportedKas);
         } catch (err) {
-          throw new Error('Invalid JSON in supported KAs field');
+          throw new Error("Invalid JSON in supported KAs field");
         }
       }
 
       const response = await graphqlRequest({
-        query: initialData ? UPDATE_KRB5_REALM_MUTATION : CREATE_KRB5_REALM_MUTATION,
+        query: initialData
+          ? UPDATE_KRB5_REALM_MUTATION
+          : CREATE_KRB5_REALM_MUTATION,
         variables: {
           dn: initialData?.dn,
           input: {
             realmName: formData.realmName,
             masterKeyName: formData.masterKeyName,
             supportedKas,
-            maxLife: formData.maxLife ? parseInt(formData.maxLife, 10) : undefined,
-            maxRenew: formData.maxRenew ? parseInt(formData.maxRenew, 10) : undefined,
+            maxLife: formData.maxLife
+              ? parseInt(formData.maxLife, 10)
+              : undefined,
+            maxRenew: formData.maxRenew
+              ? parseInt(formData.maxRenew, 10)
+              : undefined,
           },
         },
       });
 
-      onSubmit(response[initialData ? 'updateKrb5Realm' : 'createKrb5Realm']);
+      onSubmit(response[initialData ? "updateKrb5Realm" : "createKrb5Realm"]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save realm');
+      setError(err instanceof Error ? err.message : "Failed to save realm");
     } finally {
       setLoading(false);
     }
@@ -84,7 +95,11 @@ export function RealmForm({ onSubmit, onCancel, initialData }: RealmFormProps) {
       )}
 
       <div className="space-y-6">
-        <FormField label="Realm Name" required description="Kerberos realm name (e.g., EXAMPLE.COM)">
+        <FormField
+          label="Realm Name"
+          required
+          description="Kerberos realm name (e.g., EXAMPLE.COM)"
+        >
           <Input
             name="realmName"
             value={formData.realmName}
