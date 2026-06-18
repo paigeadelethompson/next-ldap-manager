@@ -19,6 +19,17 @@ export const metadata: Metadata = {
   description: 'Web-based LDAP management console',
 };
 
+const services = [
+  { name: 'openldap', label: 'OpenLDAP' },
+  { name: 'powerdns', label: 'PowerDNS' },
+  { name: 'freeradius', label: 'FreeRADIUS' },
+  { name: 'asterisk', label: 'Asterisk' },
+  { name: 'kerberos', label: 'Kerberos' },
+  { name: 'netcrave', label: 'Netcrave' },
+  { name: 'opendkim', label: 'OpenDKIM' },
+  { name: 'sendmail', label: 'Sendmail' },
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +37,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${ibmPlexSans.className} ${ibmPlexMono.className}`}>
-      <body>{children}</body>
+      <body>
+        <div className="app-container">
+          <aside className="sidebar">
+            <h1 className="mb-8 text-xl font-bold text-gray-900">LDAP Manager</h1>
+            <nav>
+              {services.map((service) => (
+                <a
+                  key={service.name}
+                  href={`/${service.name}`}
+                  className="block rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  {service.label}
+                </a>
+              ))}
+            </nav>
+          </aside>
+          <main className="main-content">{children}</main>
+        </div>
+      </body>
     </html>
   );
 }

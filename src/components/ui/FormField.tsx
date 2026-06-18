@@ -21,9 +21,9 @@ export function FormField({
   className,
 }: FormFieldProps) {
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('mb-6', className)}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
           {label} {required && <span className="text-red-600">*</span>}
         </label>
       )}
@@ -31,7 +31,7 @@ export function FormField({
         <p className="text-xs text-gray-500">{description}</p>
       )}
       <div>{children}</div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
 }
@@ -45,12 +45,10 @@ export interface FormSectionProps {
 
 export function FormSection({ title, description, children, className }: FormSectionProps) {
   return (
-    <div className={cn('space-y-4 border-t border-gray-200 pt-6', className)}>
-      <div>
-        <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-        {description && <p className="mt-1 text-sm text-gray-500">{description}</p>}
-      </div>
-      <div className="space-y-6">{children}</div>
+    <div className={cn('mb-8', className)}>
+      <h3 className="text-base font-semibold text-gray-900 mb-2">{title}</h3>
+      {description && <p className="text-sm text-gray-500 mb-4">{description}</p>}
+      {children}
     </div>
   );
 }

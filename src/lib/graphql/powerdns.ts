@@ -95,8 +95,122 @@ export const typeDefs = `
   }
 `;
 
-export const queries = {};
+const getBaseDN = () => {
+  const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+  return baseDN;
+};
 
-export const mutations = {};
+export const queries = {
+  powerdnsZones: async (_parent: unknown, args: { filter?: string; kind?: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const baseDN = `ou=zones,${getBaseDN()}`;
+    const filter = args.filter || '(objectClass=dNSZone)';
+    return await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['*'] });
+  },
+
+  powerdnsZone: async (_parent: unknown, args: { dn: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const filter = `(dn=${args.dn})`;
+    const results = await context.ldapClient.search({ baseDN: args.dn, filter, scope: 'base', attributes: ['*'] });
+    return results.length > 0 ? results[0] : null;
+  },
+
+  powerdnsRecords: async (_parent: unknown, args: { zoneName: string; filter?: string; type?: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const baseDN = `ou=records,${getBaseDN()}`;
+    let filter = args.filter || '(objectClass=dNSRecord)';
+    if (args.type) {
+      filter = `(&(objectClass=dNSRecord)(rRType=${args.type}))`;
+    }
+    return await context.ldapClient.search({ baseDN, filter, scope: 'subtree', attributes: ['*'] });
+  },
+
+  powerdnsRecord: async (_parent: unknown, args: { dn: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const filter = `(dn=${args.dn})`;
+    const results = await context.ldapClient.search({ baseDN: args.dn, filter, scope: 'base', attributes: ['*'] });
+    return results.length > 0 ? results[0] : null;
+  },
+};
+
+export const mutations = {
+  createPowerdnsZone: async (_parent: unknown, args: { input: any }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const { name, type, ttl, soa, master, nsec3param, nsec3narrow, presigned, kind } = args.input;
+    const baseDN = getBaseDN();
+    const zoneDN = `zoneName=${name},ou=zones,${baseDN}`;
+
+    const attributes: Record<string, string | string[]> = {
+      objectClass: ['dNSZone', 'top'],
+      zoneName: name,
+    };
+
+    if (type) attributes.zoneType = type;
+    if (ttl) attributes.serial = String(ttl);
+    if (soa) attributes.soaRecord = soa;
+    if (master) attributes.masterServer = master;
+
+    await context.ldapClient.add(zoneDN, attributes);
+
+    return { dn: zoneDN, name, type, ttl, soa, master };
+  },
+
+  updatePowerdnsZone: async (_parent: unknown, args: { dn: string; input: any }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const changes = Object.entries(args.input).map(([key, value]) => ({
+      attribute: key,
+      values: Array.isArray(value) ? value : [String(value)],
+      operation: 'replace' as const,
+    }));
+    await context.ldapClient.modify(args.dn, changes);
+    return { dn: args.dn, ...args.input };
+  },
+
+  deletePowerdnsZone: async (_parent: unknown, args: { dn: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    await context.ldapClient.delete(args.dn);
+    return true;
+  },
+
+  createPowerdnsRecord: async (_parent: unknown, args: { input: any }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const { zoneName, name, type, ttl, priority, content, disabled } = args.input;
+    const baseDN = getBaseDN();
+    const recordDN = `rname=${name},ou=records,${baseDN}`;
+
+    const attributes: Record<string, string | string[]> = {
+      objectClass: ['dNSRecord', 'top'],
+      zoneName: zoneName,
+      rName: name,
+      rRType: type,
+      rRContent: content,
+    };
+
+    if (ttl) attributes.rRTTL = String(ttl);
+    if (priority !== undefined) attributes.rRPriority = String(priority);
+    if (disabled !== undefined) attributes.rRDisabled = String(disabled);
+
+    await context.ldapClient.add(recordDN, attributes);
+
+    return { dn: recordDN, zoneName, name, type, ttl, priority, content, disabled };
+  },
+
+  updatePowerdnsRecord: async (_parent: unknown, args: { dn: string; input: any }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    const changes = Object.entries(args.input).map(([key, value]) => ({
+      attribute: key,
+      values: Array.isArray(value) ? value : [String(value)],
+      operation: 'replace' as const,
+    }));
+    await context.ldapClient.modify(args.dn, changes);
+    return { dn: args.dn, ...args.input };
+  },
+
+  deletePowerdnsRecord: async (_parent: unknown, args: { dn: string }, context: any) => {
+    if (!context.ldapClient) throw new Error('LDAP client not available');
+    await context.ldapClient.delete(args.dn);
+    return true;
+  },
+};
 
 export const resolvers = {};

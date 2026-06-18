@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, use } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Select } from '@/components/ui/Select';
 import { UserForm } from '@/components/services/openldap/UserForm';
 import { GroupForm } from '@/components/services/openldap/GroupForm';
 import { OuForm } from '@/components/services/openldap/OuForm';
-import { FormField } from '@/components/ui/FormField';
 import { Card } from '@/components/ui/Card';
+import { getServiceConfig } from '@/lib/services';
 
 type EntryType = 'user' | 'group' | 'ou';
 
@@ -18,20 +17,21 @@ export default function NewEntryPage({
   params: Promise<{ service: string }>;
 }) {
   const resolvedParams = use(params);
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const [entryType, setEntryType] = useState<EntryType>('user');
+
+  const entryType = (searchParams.get('entryType') as EntryType) || 'user';
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [createdEntry, setCreatedEntry] = useState<any>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  async function handleSubmit(data: any) {
+    setCreatedEntry(data);
     setError(null);
+    setLoading(true);
 
     try {
-      // In a real implementation, this would submit to GraphQL
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
       router.push(`/${resolvedParams.service}`);
       router.refresh();
     } catch (err) {
@@ -44,60 +44,56 @@ export default function NewEntryPage({
   const renderForm = () => {
     switch (entryType) {
       case 'user':
-        return <UserForm onSubmit={() => {}} onCancel={() => {}} />;
+        return <UserForm onSubmit={handleSubmit} onCancel={() => router.push(`/${resolvedParams.service}`)} />;
       case 'group':
-        return <GroupForm onSubmit={() => {}} onCancel={() => {}} />;
+        return <GroupForm onSubmit={handleSubmit} onCancel={() => router.push(`/${resolvedParams.service}`)} />;
       case 'ou':
-        return <OuForm onSubmit={() => {}} onCancel={() => {}} />;
+        return <OuForm onSubmit={handleSubmit} onCancel={() => router.push(`/${resolvedParams.service}`)} />;
     }
   };
 
+  const serviceConfig = getServiceConfig(resolvedParams.service);
+
+  if (createdEntry) {
+    return (
+      <div className="page-wrapper">
+        <Card title={`Successfully Created ${entryType.charAt(0).toUpperCase() + entryType.slice(1)}`}>
+          <div className="card-content">
+            <p className="text-green-600 mb-4">The {entryType} was created successfully!</p>
+            <div className="space-y-2 text-sm">
+              <p><strong>DN:</strong> {createdEntry.dn}</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 capitalize">{resolvedParams.service}</h1>
+    <div className="page-wrapper">
+      {/* Form Card */}
+      <Card title={`Create New ${entryType.charAt(0).toUpperCase() + entryType.slice(1)}`}>
+        {error && (
+          <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700 border border-red-200">
+            {error}
+          </div>
+        )}
+        <div className="card-content">
+          {renderForm()}
+        </div>
+        <div className="action-buttons">
           <Button variant="secondary" onClick={() => router.push(`/${resolvedParams.service}`)}>
-            Back to List
+            Cancel
+          </Button>
+          <Button type="button" disabled={loading} onClick={() => {
+            setLoading(true);
+            setError('Please fill out the form and submit it');
+            setTimeout(() => setLoading(false), 1000);
+          }}>
+            {loading ? 'Creating...' : `Create ${entryType.charAt(0).toUpperCase() + entryType.slice(1)}`}
           </Button>
         </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <Card title={`Create New ${resolvedParams.service} Entry`}>
-          {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-
-          {/* Entry Type Selector */}
-          <FormField label="Entry Type" required>
-            <Select
-              value={entryType}
-              onChange={(e) => setEntryType(e.target.value as EntryType)}
-              options={[
-                { value: 'user', label: 'User' },
-                { value: 'group', label: 'Group' },
-                { value: 'ou', label: 'Organizational Unit' },
-              ]}
-            />
-          </FormField>
-
-          <form onSubmit={handleSubmit} className="space-y-6 pt-6 border-t border-gray-200 mt-6">
-            {renderForm()}
-
-            <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-              <Button variant="secondary" onClick={() => router.push(`/${resolvedParams.service}`)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? 'Creating...' : `Create ${entryType.charAt(0).toUpperCase() + entryType.slice(1)}`}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      </main>
+      </Card>
     </div>
   );
 }

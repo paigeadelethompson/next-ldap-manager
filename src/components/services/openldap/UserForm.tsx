@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { graphqlRequest, CREATE_USER_MUTATION } from '@/lib/graphql/client';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
-import { Card } from '@/components/ui/Card';
 
 interface UserFormProps {
   onSubmit: (data: any) => void;
@@ -25,6 +24,7 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
     ou: initialData?.ou || '',
   });
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormData((prev) => ({
@@ -34,10 +34,30 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
     setError(null);
   }
 
+  async function handleSubmit() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await graphqlRequest({
+        query: CREATE_USER_MUTATION,
+        variables: {
+          input: formData,
+        },
+      });
+
+      onSubmit(response.createOpenLdapUser);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create user');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <Card title="User Information">
+    <div className="card-content">
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-700">
+        <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700 border border-red-200">
           {error}
         </div>
       )}
@@ -133,16 +153,7 @@ export function UserForm({ onSubmit, onCancel, initialData }: UserFormProps) {
             />
           </FormField>
         )}
-
-        <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-          <Button variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="button" onClick={() => onSubmit(formData)}>
-            {initialData ? 'Update User' : 'Create User'}
-          </Button>
-        </div>
       </div>
-    </Card>
+    </div>
   );
 }

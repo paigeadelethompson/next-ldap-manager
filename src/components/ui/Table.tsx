@@ -21,7 +21,7 @@ const Table = ({ className, children, ...props }: TableProps) => (
 Table.displayName = 'Table';
 
 export const TableHeader = ({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) => (
-  <thead className={cn('[&_tr]:border-b [&_tr]:border-gray-200', className)} {...props} />
+  <thead className={cn('[&_tr]:border-b [&_tr]:border-gray-200 bg-gray-50', className)} {...props} />
 );
 
 export const TableBody = ({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) => (
@@ -37,7 +37,7 @@ export const TableRow = ({
 }: HTMLAttributes<HTMLTableRowElement> & { selectable?: boolean }) => (
   <tr
     className={cn(
-      'transition-colors hover:bg-gray-50 data-[state=selected]:bg-gray-50',
+      'transition-colors hover:bg-blue-50/30 data-[state=selected]:bg-gray-50',
       className
     )}
     {...props}
@@ -50,7 +50,7 @@ export const TableHead = ({
 }: HTMLAttributes<HTMLTableCellElement>) => (
   <th
     className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-gray-700 [&:has([role=checkbox])]:pr-0',
+      'px-6 py-4 text-left align-middle font-semibold text-gray-700 bg-gray-50',
       className
     )}
     {...props}
@@ -62,7 +62,7 @@ export const TableCell = ({
   ...props
 }: HTMLAttributes<HTMLTableCellElement>) => (
   <td
-    className={cn('p-4 align-middle text-gray-600 [&:has([role=checkbox])]:pr-0', className)}
+    className={cn('px-6 py-4 align-middle text-gray-600 border-b border-gray-100', className)}
     {...props}
   />
 );

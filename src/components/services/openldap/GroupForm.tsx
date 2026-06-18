@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { graphqlRequest, CREATE_GROUP_MUTATION } from '@/lib/graphql/client';
 import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 
 interface GroupFormProps {
   onSubmit: (data: any) => void;
@@ -20,6 +19,7 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
     description: initialData?.description || '',
   });
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormData((prev) => ({
@@ -29,10 +29,30 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
     setError(null);
   }
 
+  async function handleSubmit() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await graphqlRequest({
+        query: CREATE_GROUP_MUTATION,
+        variables: {
+          input: formData,
+        },
+      });
+
+      onSubmit(response.createOpenLdapGroup);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create group');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <Card title="Group Information">
+    <div className="card-content">
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-700">
+        <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700 border border-red-200">
           {error}
         </div>
       )}
@@ -77,16 +97,7 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
             placeholder="Development team"
           />
         </FormField>
-
-        <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-          <Button variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="button" onClick={() => onSubmit(formData)}>
-            {initialData ? 'Update Group' : 'Create Group'}
-          </Button>
-        </div>
       </div>
-    </Card>
+    </div>
   );
 }
