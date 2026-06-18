@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/sendmail";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface AliasFormProps {
   onSubmit: (data: any) => void;
@@ -69,42 +70,58 @@ export function AliasForm({ onSubmit, onCancel, initialData }: AliasFormProps) {
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Maildrop (Target)"
-          required
-          description="Where emails should be forwarded"
-        >
-          <Input
-            name="maildrop"
-            value={formData.maildrop}
-            onChange={handleChange}
-            placeholder="/path/to/forward"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Maildrop (Target)"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Email Address">
+            description="Where emails should be forwarded"
+          >
             <Input
-              name="mail"
-              type="email"
-              value={formData.mail}
+              name="maildrop"
+              value={formData.maildrop}
               onChange={handleChange}
-              placeholder="user@example.com"
+              placeholder="/path/to/forward"
+              required
             />
           </FormField>
 
-          <FormField label="Description">
-            <Input
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Forward to backup address"
-            />
-          </FormField>
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Email Address">
+              <Input
+                name="mail"
+                type="email"
+                value={formData.mail}
+                onChange={handleChange}
+                placeholder="user@example.com"
+              />
+            </FormField>
+
+            <FormField label="Description">
+              <Input
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Forward to backup address"
+              />
+            </FormField>
+          </div>
         </div>
-      </div>
+
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Alias"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

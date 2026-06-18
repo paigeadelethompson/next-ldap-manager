@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/sendmail";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface MapFormProps {
   onSubmit: (data: any) => void;
@@ -71,52 +72,68 @@ export function MapForm({ onSubmit, onCancel, initialData }: MapFormProps) {
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Map Name"
-          required
-          description="Name of the sendmail map (e.g., relay-domains)"
-        >
-          <Input
-            name="mapName"
-            value={formData.mapName}
-            onChange={handleChange}
-            placeholder="relay-domains"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Map Name"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Key" required>
+            description="Name of the sendmail map (e.g., relay-domains)"
+          >
             <Input
-              name="key"
-              value={formData.key}
+              name="mapName"
+              value={formData.mapName}
               onChange={handleChange}
-              placeholder="example.com"
+              placeholder="relay-domains"
               required
             />
           </FormField>
 
-          <FormField label="Value" required>
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Key" required>
+              <Input
+                name="key"
+                value={formData.key}
+                onChange={handleChange}
+                placeholder="example.com"
+                required
+              />
+            </FormField>
+
+            <FormField label="Value" required>
+              <Input
+                name="value"
+                value={formData.value}
+                onChange={handleChange}
+                placeholder="OK"
+                required
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Description">
             <Input
-              name="value"
-              value={formData.value}
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              placeholder="OK"
-              required
+              placeholder="Allow relaying for this domain"
             />
           </FormField>
         </div>
 
-        <FormField label="Description">
-          <Input
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Allow relaying for this domain"
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Map"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

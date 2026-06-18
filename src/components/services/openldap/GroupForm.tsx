@@ -5,6 +5,7 @@ import { graphqlRequest } from "@/lib/graphql/client";
 import { CREATE_GROUP_MUTATION } from "@/lib/graphql/openldap";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface GroupFormProps {
   onSubmit: (data: any) => void;
@@ -58,57 +59,73 @@ export function GroupForm({ onSubmit, onCancel, initialData }: GroupFormProps) {
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Group Name (cn)"
-          required
-          description="Name of the group"
-        >
-          <Input
-            name="cn"
-            value={formData.cn}
-            onChange={handleChange}
-            placeholder="developers"
-            required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
           <FormField
-            label="GID Number"
-            description="Group ID (auto-assigned if empty)"
+            label="Group Name (cn)"
+            required
+            description="Name of the group"
           >
             <Input
-              name="gidNumber"
-              value={formData.gidNumber}
+              name="cn"
+              value={formData.cn}
               onChange={handleChange}
-              type="number"
-              placeholder="1000"
+              placeholder="developers"
+              required
+            />
+          </FormField>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField
+              label="GID Number"
+              description="Group ID (auto-assigned if empty)"
+            >
+              <Input
+                name="gidNumber"
+                value={formData.gidNumber}
+                onChange={handleChange}
+                type="number"
+                placeholder="1000"
+              />
+            </FormField>
+          </div>
+
+          <FormField
+            label="Members (comma-separated UIDs)"
+            description="User IDs belonging to this group"
+          >
+            <Input
+              name="memberUid"
+              value={formData.memberUid}
+              onChange={handleChange}
+              placeholder="jdoe,asmith,jbrown"
+            />
+          </FormField>
+
+          <FormField label="Description">
+            <Input
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Development team"
             />
           </FormField>
         </div>
 
-        <FormField
-          label="Members (comma-separated UIDs)"
-          description="User IDs belonging to this group"
-        >
-          <Input
-            name="memberUid"
-            value={formData.memberUid}
-            onChange={handleChange}
-            placeholder="jdoe,asmith,jbrown"
-          />
-        </FormField>
-
-        <FormField label="Description">
-          <Input
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Development team"
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Group"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

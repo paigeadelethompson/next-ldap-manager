@@ -5,6 +5,7 @@ import { graphqlRequest } from "@/lib/graphql/client";
 import { CREATE_OU_MUTATION } from "@/lib/graphql/openldap";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface OuFormProps {
   onSubmit: (data: any) => void;
@@ -56,30 +57,46 @@ export function OuForm({ onSubmit, onCancel, initialData }: OuFormProps) {
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="OU Name"
-          required
-          description="Name of the organizational unit"
-        >
-          <Input
-            name="ou"
-            value={formData.ou}
-            onChange={handleChange}
-            placeholder="Engineering"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="OU Name"
             required
-          />
-        </FormField>
+            description="Name of the organizational unit"
+          >
+            <Input
+              name="ou"
+              value={formData.ou}
+              onChange={handleChange}
+              placeholder="Engineering"
+              required
+            />
+          </FormField>
 
-        <FormField label="Description">
-          <Input
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Engineering department"
-          />
-        </FormField>
-      </div>
+          <FormField label="Description">
+            <Input
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Engineering department"
+            />
+          </FormField>
+        </div>
+
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create OU"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/asterisk";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface SipAccountFormProps {
   onSubmit: (data: any) => void;
@@ -111,183 +112,199 @@ export function SipAccountForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Account ID"
-          required
-          description="SIP account username/extension"
-        >
-          <Input
-            name="accountid"
-            value={formData.accountid}
-            onChange={handleChange}
-            placeholder="1000"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Account ID"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Secret (Password)" required>
+            description="SIP account username/extension"
+          >
             <Input
-              name="secret"
-              type="password"
-              value={formData.secret}
+              name="accountid"
+              value={formData.accountid}
               onChange={handleChange}
-              placeholder="secure-password"
+              placeholder="1000"
               required
             />
           </FormField>
 
-          <FormField label="Context">
-            <Input
-              name="context"
-              value={formData.context}
-              onChange={handleChange}
-              placeholder="default"
-            />
-          </FormField>
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Secret (Password)" required>
+              <Input
+                name="secret"
+                type="password"
+                value={formData.secret}
+                onChange={handleChange}
+                placeholder="secure-password"
+                required
+              />
+            </FormField>
+
+            <FormField label="Context">
+              <Input
+                name="context"
+                value={formData.context}
+                onChange={handleChange}
+                placeholder="default"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Host">
+              <Input
+                name="host"
+                value={formData.host}
+                onChange={handleChange}
+                placeholder="dynamic"
+              />
+            </FormField>
+
+            <FormField label="NAT">
+              <select
+                name="nat"
+                value={formData.nat}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="never">Never</option>
+                <option value="route">Route</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Type">
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="friend">Friend</option>
+                <option value="user">User</option>
+                <option value="peer">Peer</option>
+              </select>
+            </FormField>
+
+            <FormField label="DTMF Mode">
+              <select
+                name="dtmfmode"
+                value={formData.dtmfmode}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="rfc2833">RFC 2833</option>
+                <option value="info">INFO</option>
+                <option value="inband">In-band</option>
+                <option value="auto">Auto</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Allow Codecs">
+              <Input
+                name="allow"
+                value={formData.allow}
+                onChange={handleChange}
+                placeholder="g729,g711"
+              />
+            </FormField>
+
+            <FormField label="Disallow Codecs">
+              <Input
+                name="disallow"
+                value={formData.disallow}
+                onChange={handleChange}
+                placeholder="all"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Can Reinvite">
+              <select
+                name="canreinvite"
+                value={formData.canreinvite}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </FormField>
+
+            <FormField label="Trust RDN">
+              <select
+                name="trustrdn"
+                value={formData.trustrdn}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Call Group">
+              <Input
+                name="callgroup"
+                value={formData.callgroup}
+                onChange={handleChange}
+                placeholder="1,2,3"
+              />
+            </FormField>
+
+            <FormField label="Pickup Group">
+              <Input
+                name="pickupgroup"
+                value={formData.pickupgroup}
+                onChange={handleChange}
+                placeholder="1,2,3"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Mailbox">
+              <Input
+                name="mailbox"
+                value={formData.mailbox}
+                onChange={handleChange}
+                placeholder="1000@default"
+              />
+            </FormField>
+
+            <FormField label="Caller ID">
+              <Input
+                name="callerid"
+                value={formData.callerid}
+                onChange={handleChange}
+                placeholder='"John Doe" &lt;1000&gt;'
+              />
+            </FormField>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Host">
-            <Input
-              name="host"
-              value={formData.host}
-              onChange={handleChange}
-              placeholder="dynamic"
-            />
-          </FormField>
-
-          <FormField label="NAT">
-            <select
-              name="nat"
-              value={formData.nat}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-              <option value="never">Never</option>
-              <option value="route">Route</option>
-            </select>
-          </FormField>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create SIP Account"}
+          </Button>
         </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Type">
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="friend">Friend</option>
-              <option value="user">User</option>
-              <option value="peer">Peer</option>
-            </select>
-          </FormField>
-
-          <FormField label="DTMF Mode">
-            <select
-              name="dtmfmode"
-              value={formData.dtmfmode}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="rfc2833">RFC 2833</option>
-              <option value="info">INFO</option>
-              <option value="inband">In-band</option>
-              <option value="auto">Auto</option>
-            </select>
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Allow Codecs">
-            <Input
-              name="allow"
-              value={formData.allow}
-              onChange={handleChange}
-              placeholder="g729,g711"
-            />
-          </FormField>
-
-          <FormField label="Disallow Codecs">
-            <Input
-              name="disallow"
-              value={formData.disallow}
-              onChange={handleChange}
-              placeholder="all"
-            />
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Can Reinvite">
-            <select
-              name="canreinvite"
-              value={formData.canreinvite}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </FormField>
-
-          <FormField label="Trust RDN">
-            <select
-              name="trustrdn"
-              value={formData.trustrdn}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Call Group">
-            <Input
-              name="callgroup"
-              value={formData.callgroup}
-              onChange={handleChange}
-              placeholder="1,2,3"
-            />
-          </FormField>
-
-          <FormField label="Pickup Group">
-            <Input
-              name="pickupgroup"
-              value={formData.pickupgroup}
-              onChange={handleChange}
-              placeholder="1,2,3"
-            />
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Mailbox">
-            <Input
-              name="mailbox"
-              value={formData.mailbox}
-              onChange={handleChange}
-              placeholder="1000@default"
-            />
-          </FormField>
-
-          <FormField label="Caller ID">
-            <Input
-              name="callerid"
-              value={formData.callerid}
-              onChange={handleChange}
-              placeholder='"John Doe" &lt;1000&gt;'
-            />
-          </FormField>
-        </div>
-      </div>
+      </form>
     </div>
   );
 }

@@ -40,14 +40,19 @@ export class LDAPClient {
       }
     }
 
-    const tlsOptions: { rejectUnauthorized?: boolean } = {
-      rejectUnauthorized: this.config.tlsRejectUnauthorized,
+    // Only pass tlsOptions if using LDAPS (ldap:// doesn't need TLS options)
+    const clientOptions: { url: string; tlsOptions?: any } = {
+      url: this.config.url,
     };
 
-    this.client = new Client({
-      url: this.config.url,
-      tlsOptions,
-    });
+    // Only configure TLS for LDAPS connections
+    if (this.config.url.startsWith("ldaps://")) {
+      clientOptions.tlsOptions = {
+        rejectUnauthorized: this.config.tlsRejectUnauthorized,
+      };
+    }
+
+    this.client = new Client(clientOptions);
 
     await this.client.bind(this.config.bindDN, this.config.bindPassword);
 

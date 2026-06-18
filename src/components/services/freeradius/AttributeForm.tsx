@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { Select } from "@/components/ui/Select";
+import { Button } from "@/components/ui/Button";
 
 interface AttributeFormProps {
   onSubmit: (data: any) => void;
@@ -99,51 +100,67 @@ export function AttributeForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Username"
-          required
-          description="User this attribute applies to"
-        >
-          <Input
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="jdoe"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Username"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-3 gap-6">
-          <FormField label="Attribute" required>
+            description="User this attribute applies to"
+          >
             <Input
-              name="attribute"
-              value={formData.attribute}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="Simultaneous-Use"
+              placeholder="jdoe"
               required
             />
           </FormField>
 
-          <FormField label="Operator" required>
-            <Select
-              options={OPERATORS}
-              value={formData.operator}
-              onChange={(e) => handleSelectChange("operator", e.target.value)}
-            />
-          </FormField>
+          <div className="grid grid-cols-3 gap-6">
+            <FormField label="Attribute" required>
+              <Input
+                name="attribute"
+                value={formData.attribute}
+                onChange={handleChange}
+                placeholder="Simultaneous-Use"
+                required
+              />
+            </FormField>
 
-          <FormField label="Value" required>
-            <Input
-              name="value"
-              value={formData.value}
-              onChange={handleChange}
-              placeholder="1"
-              required
-            />
-          </FormField>
+            <FormField label="Operator" required>
+              <Select
+                options={OPERATORS}
+                value={formData.operator}
+                onChange={(e) => handleSelectChange("operator", e.target.value)}
+              />
+            </FormField>
+
+            <FormField label="Value" required>
+              <Input
+                name="value"
+                value={formData.value}
+                onChange={handleChange}
+                placeholder="1"
+                required
+              />
+            </FormField>
+          </div>
         </div>
-      </div>
+
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Attribute"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

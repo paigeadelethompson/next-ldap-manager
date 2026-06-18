@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/freeradius";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface NASFormProps {
   onSubmit: (data: any) => void;
@@ -75,82 +76,98 @@ export function NASForm({ onSubmit, onCancel, initialData }: NASFormProps) {
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="NAS Name"
-          required
-          description="IP address or hostname of the NAS"
-        >
-          <Input
-            name="nasname"
-            value={formData.nasname}
-            onChange={handleChange}
-            placeholder="192.168.1.100"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="NAS Name"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Short Name">
+            description="IP address or hostname of the NAS"
+          >
             <Input
-              name="shortname"
-              value={formData.shortname}
+              name="nasname"
+              value={formData.nasname}
               onChange={handleChange}
-              placeholder="office-ap"
+              placeholder="192.168.1.100"
+              required
             />
           </FormField>
 
-          <FormField label="Type">
-            <select
-              name="type"
-              value={formData.type}
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Short Name">
+              <Input
+                name="shortname"
+                value={formData.shortname}
+                onChange={handleChange}
+                placeholder="office-ap"
+              />
+            </FormField>
+
+            <FormField label="Type">
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="other">Other</option>
+                <option value="cisco">Cisco</option>
+                <option value="lantronix">Lantronix</option>
+                <option value="mikrotik">MikroTik</option>
+                <option value="nokia">Nokia</option>
+                <option value="juniper">Juniper</option>
+                <option value="cisco-vpn3000">Cisco VPN 3000</option>
+              </select>
+            </FormField>
+          </div>
+
+          <FormField
+            label="Secret"
+            required
+            description="Shared secret between NAS and RADIUS server"
+          >
+            <Input
+              name="secret"
+              type="password"
+              value={formData.secret}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="other">Other</option>
-              <option value="cisco">Cisco</option>
-              <option value="lantronix">Lantronix</option>
-              <option value="mikrotik">MikroTik</option>
-              <option value="nokia">Nokia</option>
-              <option value="juniper">Juniper</option>
-              <option value="cisco-vpn3000">Cisco VPN 3000</option>
-            </select>
+              placeholder="shared-secret"
+              required
+            />
+          </FormField>
+
+          <FormField label="Radius Client ID">
+            <Input
+              name="radiusclientid"
+              value={formData.radiusclientid}
+              onChange={handleChange}
+              placeholder="radius-client-id"
+            />
+          </FormField>
+
+          <FormField label="Description">
+            <Input
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Main office access point"
+            />
           </FormField>
         </div>
 
-        <FormField
-          label="Secret"
-          required
-          description="Shared secret between NAS and RADIUS server"
-        >
-          <Input
-            name="secret"
-            type="password"
-            value={formData.secret}
-            onChange={handleChange}
-            placeholder="shared-secret"
-            required
-          />
-        </FormField>
-
-        <FormField label="Radius Client ID">
-          <Input
-            name="radiusclientid"
-            value={formData.radiusclientid}
-            onChange={handleChange}
-            placeholder="radius-client-id"
-          />
-        </FormField>
-
-        <FormField label="Description">
-          <Input
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Main office access point"
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create NAS"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

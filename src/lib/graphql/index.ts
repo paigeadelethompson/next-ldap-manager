@@ -10,6 +10,14 @@ import { typeDefs as netcraveTypeDefs } from "./netcrave";
 import { typeDefs as opendkimTypeDefs } from "./opendkim";
 import { typeDefs as powerdnsTypeDefs } from "./powerdns";
 import { typeDefs as sendmailTypeDefs } from "./sendmail";
+import { mutations as openldapMutations } from "./openldap";
+import { mutations as asteriskMutations } from "./asterisk";
+import { mutations as freeradiusMutations } from "./freeradius";
+import { mutations as krb5Mutations } from "./krb5";
+import { mutations as netcraveMutations } from "./netcrave";
+import { mutations as opendkimMutations } from "./opendkim";
+import { mutations as powerdnsMutations } from "./powerdns";
+import { mutations as sendmailMutations } from "./sendmail";
 
 // Generic LDAP entry operations resolvers
 const getBaseDN = () => {
@@ -87,6 +95,16 @@ export const mutations = {
     await context.ldapClient.delete(args.dn);
     return true;
   },
+
+  // Service-specific mutations
+  ...openldapMutations,
+  ...asteriskMutations,
+  ...freeradiusMutations,
+  ...krb5Mutations,
+  ...netcraveMutations,
+  ...opendkimMutations,
+  ...powerdnsMutations,
+  ...sendmailMutations,
 };
 
 // JSON scalar resolver

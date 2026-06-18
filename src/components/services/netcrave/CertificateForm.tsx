@@ -9,6 +9,7 @@ import {
 } from "@/lib/graphql/netcrave";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface CertificateFormProps {
   onSubmit: (data: any) => void;
@@ -102,80 +103,96 @@ export function CertificateForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        {!initialData && (
-          <>
-            <FormField
-              label="Template DN"
-              required
-              description="Distinguished name of the certificate template"
-            >
-              <Input
-                name="templateDn"
-                value={formData.templateDn}
-                onChange={handleChange}
-                placeholder="cn=server-cert,ou=templates,dc=example,dc=com"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          {!initialData && (
+            <>
+              <FormField
+                label="Template DN"
                 required
-              />
-            </FormField>
-
-            <FormField label="Common Name (CN)" required>
-              <Input
-                name="cn"
-                value={formData.cn}
-                onChange={handleChange}
-                placeholder="example.com"
-                required
-              />
-            </FormField>
-          </>
-        )}
-
-        {initialData && (
-          <FormField label="Action">
-            <select
-              name="action"
-              onChange={(e) => {
-                if (e.target.value === "restore") {
-                  onSubmit({ cn: formData.cn, dn: initialData.dn });
-                }
-              }}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="">Select action...</option>
-              <option value="revoke">Revoke Certificate</option>
-              <option value="restore">Restore Certificate</option>
-            </select>
-          </FormField>
-        )}
-
-        {!initialData && (
-          <>
-            <div className="grid grid-cols-2 gap-6">
-              <FormField label="Validity Days">
+                description="Distinguished name of the certificate template"
+              >
                 <Input
-                  name="validityDays"
-                  type="number"
-                  value={formData.validityDays}
+                  name="templateDn"
+                  value={formData.templateDn}
                   onChange={handleChange}
-                  placeholder="365"
+                  placeholder="cn=server-cert,ou=templates,dc=example,dc=com"
+                  required
                 />
               </FormField>
-            </div>
 
-            <FormField label="Subject Alternative Names (JSON)">
-              <textarea
-                name="san"
-                value={formData.san}
-                onChange={handleTextAreaChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
-                rows={4}
-                placeholder='["example.com", "*.example.com"]'
-              />
+              <FormField label="Common Name (CN)" required>
+                <Input
+                  name="cn"
+                  value={formData.cn}
+                  onChange={handleChange}
+                  placeholder="example.com"
+                  required
+                />
+              </FormField>
+            </>
+          )}
+
+          {initialData && (
+            <FormField label="Action">
+              <select
+                name="action"
+                onChange={(e) => {
+                  if (e.target.value === "restore") {
+                    onSubmit({ cn: formData.cn, dn: initialData.dn });
+                  }
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Select action...</option>
+                <option value="revoke">Revoke Certificate</option>
+                <option value="restore">Restore Certificate</option>
+              </select>
             </FormField>
-          </>
-        )}
-      </div>
+          )}
+
+          {!initialData && (
+            <>
+              <div className="grid grid-cols-2 gap-6">
+                <FormField label="Validity Days">
+                  <Input
+                    name="validityDays"
+                    type="number"
+                    value={formData.validityDays}
+                    onChange={handleChange}
+                    placeholder="365"
+                  />
+                </FormField>
+              </div>
+
+              <FormField label="Subject Alternative Names (JSON)">
+                <textarea
+                  name="san"
+                  value={formData.san}
+                  onChange={handleTextAreaChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
+                  rows={4}
+                  placeholder='["example.com", "*.example.com"]'
+                />
+              </FormField>
+            </>
+          )}
+        </div>
+
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Certificate"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -16,23 +16,19 @@ export async function POST(request: Request) {
 
   // Create LDAP client for this request
   const ldapConfig = getLdapConfig();
-  const ldapClient = ldapClientPool.getClient(ldapConfig);
-
-  // Create context with LDAP client
-  const context = {
-    ldapClient,
-  };
-
-  // Create Apollo Server with resolvers that need context
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-  });
 
   try {
+    // Create Apollo Server with context that provides LDAP client
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers,
+    });
+
+    const contextValue = { ldapClient: ldapClientPool.getClient(ldapConfig) };
+
     const result = await server.executeOperation(
       { query, variables, operationName },
-      { context },
+      { contextValue },
     );
 
     return Response.json(result);

@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/opendkim";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface DomainFormProps {
   onSubmit: (data: any) => void;
@@ -77,69 +78,85 @@ export function DomainForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Domain Name"
-          required
-          description="Domain to sign for"
-        >
-          <Input
-            name="domainName"
-            value={formData.domainName}
-            onChange={handleChange}
-            placeholder="example.com"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Domain Name"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Selector">
+            description="Domain to sign for"
+          >
             <Input
-              name="selector"
-              value={formData.selector}
+              name="domainName"
+              value={formData.domainName}
               onChange={handleChange}
-              placeholder="default"
+              placeholder="example.com"
+              required
             />
           </FormField>
 
-          <FormField label="Key Sign Flag">
-            <select
-              name="keysign"
-              value={formData.keysign}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="y">Yes (sign)</option>
-              <option value="n">No (don't sign)</option>
-              <option value="v">Verify only</option>
-            </select>
-          </FormField>
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Selector">
+              <Input
+                name="selector"
+                value={formData.selector}
+                onChange={handleChange}
+                placeholder="default"
+              />
+            </FormField>
+
+            <FormField label="Key Sign Flag">
+              <select
+                name="keysign"
+                value={formData.keysign}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="y">Yes (sign)</option>
+                <option value="n">No (don't sign)</option>
+                <option value="v">Verify only</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Key File">
+              <Input
+                name="keyfile"
+                value={formData.keyfile}
+                onChange={handleChange}
+                placeholder="/etc/opendkim/keys/example.com/default.private"
+              />
+            </FormField>
+
+            <FormField label="Identity Usage Agreement (IUA)">
+              <select
+                name="iua"
+                value={formData.iua}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="individual">Individual</option>
+                <option value="organization">Organization</option>
+                <option value="both">Both</option>
+              </select>
+            </FormField>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Key File">
-            <Input
-              name="keyfile"
-              value={formData.keyfile}
-              onChange={handleChange}
-              placeholder="/etc/opendkim/keys/example.com/default.private"
-            />
-          </FormField>
-
-          <FormField label="Identity Usage Agreement (IUA)">
-            <select
-              name="iua"
-              value={formData.iua}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="individual">Individual</option>
-              <option value="organization">Organization</option>
-              <option value="both">Both</option>
-            </select>
-          </FormField>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Domain"}
+          </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

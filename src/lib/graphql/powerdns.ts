@@ -202,7 +202,18 @@ export const mutations = {
 
     await context.ldapClient.add(zoneDN, attributes);
 
-    return { dn: zoneDN, name, type, ttl, soa, master };
+    return {
+      dn: zoneDN,
+      name,
+      type,
+      ttl,
+      soa,
+      master,
+      nsec3param,
+      nsec3narrow,
+      presigned,
+      kind,
+    };
   },
 
   updatePowerdnsZone: async (

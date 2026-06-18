@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/asterisk";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface DialplanFormProps {
   onSubmit: (data: any) => void;
@@ -79,59 +80,75 @@ export function DialplanForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <div className="grid grid-cols-3 gap-6">
-          <FormField label="Context" required>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <div className="grid grid-cols-3 gap-6">
+            <FormField label="Context" required>
+              <Input
+                name="context"
+                value={formData.context}
+                onChange={handleChange}
+                placeholder="default"
+                required
+              />
+            </FormField>
+
+            <FormField label="Extension" required>
+              <Input
+                name="exten"
+                value={formData.exten}
+                onChange={handleChange}
+                placeholder="1000"
+                required
+              />
+            </FormField>
+
+            <FormField label="Priority" required>
+              <Input
+                name="priority"
+                type="number"
+                value={formData.priority}
+                onChange={handleChange}
+                placeholder="1"
+                required
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Application Name" required>
             <Input
-              name="context"
-              value={formData.context}
+              name="appname"
+              value={formData.appname}
               onChange={handleChange}
-              placeholder="default"
+              placeholder="Dial"
               required
             />
           </FormField>
 
-          <FormField label="Extension" required>
+          <FormField label="Application Data">
             <Input
-              name="exten"
-              value={formData.exten}
+              name="appdata"
+              value={formData.appdata}
               onChange={handleChange}
-              placeholder="1000"
-              required
-            />
-          </FormField>
-
-          <FormField label="Priority" required>
-            <Input
-              name="priority"
-              type="number"
-              value={formData.priority}
-              onChange={handleChange}
-              placeholder="1"
-              required
+              placeholder="SIP/1000"
             />
           </FormField>
         </div>
 
-        <FormField label="Application Name" required>
-          <Input
-            name="appname"
-            value={formData.appname}
-            onChange={handleChange}
-            placeholder="Dial"
-            required
-          />
-        </FormField>
-
-        <FormField label="Application Data">
-          <Input
-            name="appdata"
-            value={formData.appdata}
-            onChange={handleChange}
-            placeholder="SIP/1000"
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Extension"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

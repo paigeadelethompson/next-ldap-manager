@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/powerdns";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface RecordFormProps {
   onSubmit: (data: any) => void;
@@ -88,102 +89,118 @@ export function RecordForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
-          <FormField
-            label="Zone Name"
-            required
-            description="Parent zone for the record (e.g., example.com)"
-          >
-            <Input
-              name="zoneName"
-              value={formData.zoneName}
-              onChange={handleChange}
-              placeholder="example.com"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField
+              label="Zone Name"
               required
-            />
-          </FormField>
-
-          <FormField label="Record Name" required>
-            <Input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="@ or host.example.com"
-              required
-            />
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Type" required>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              description="Parent zone for the record (e.g., example.com)"
             >
-              <option value="A">A</option>
-              <option value="AAAA">AAAA</option>
-              <option value="CNAME">CNAME</option>
-              <option value="MX">MX</option>
-              <option value="NS">NS</option>
-              <option value="PTR">PTR</option>
-              <option value="SOA">SOA</option>
-              <option value="TXT">TXT</option>
-              <option value="SRV">SRV</option>
-              <option value="CAA">CAA</option>
-              <option value="DNSKEY">DNSKEY</option>
-            </select>
-          </FormField>
-
-          <FormField label="TTL (seconds)">
-            <Input
-              name="ttl"
-              type="number"
-              value={formData.ttl}
-              onChange={handleChange}
-              placeholder="86400"
-            />
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          {["MX", "SRV"].includes(formData.type) && (
-            <FormField label="Priority">
               <Input
-                name="priority"
-                type="number"
-                value={formData.priority}
+                name="zoneName"
+                value={formData.zoneName}
                 onChange={handleChange}
-                placeholder="10"
+                placeholder="example.com"
+                required
               />
             </FormField>
-          )}
 
-          <FormField label="Disabled">
-            <select
-              name="disabled"
-              value={formData.disabled}
+            <FormField label="Record Name" required>
+              <Input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="@ or host.example.com"
+                required
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Type" required>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="A">A</option>
+                <option value="AAAA">AAAA</option>
+                <option value="CNAME">CNAME</option>
+                <option value="MX">MX</option>
+                <option value="NS">NS</option>
+                <option value="PTR">PTR</option>
+                <option value="SOA">SOA</option>
+                <option value="TXT">TXT</option>
+                <option value="SRV">SRV</option>
+                <option value="CAA">CAA</option>
+                <option value="DNSKEY">DNSKEY</option>
+              </select>
+            </FormField>
+
+            <FormField label="TTL (seconds)">
+              <Input
+                name="ttl"
+                type="number"
+                value={formData.ttl}
+                onChange={handleChange}
+                placeholder="86400"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            {["MX", "SRV"].includes(formData.type) && (
+              <FormField label="Priority">
+                <Input
+                  name="priority"
+                  type="number"
+                  value={formData.priority}
+                  onChange={handleChange}
+                  placeholder="10"
+                />
+              </FormField>
+            )}
+
+            <FormField label="Disabled">
+              <select
+                name="disabled"
+                value={formData.disabled}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </FormField>
+          </div>
+
+          <FormField label="Content" required>
+            <Input
+              name="content"
+              value={formData.content}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
+              placeholder="192.168.1.1 or mail.example.com"
+              required
+            />
           </FormField>
         </div>
 
-        <FormField label="Content" required>
-          <Input
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            placeholder="192.168.1.1 or mail.example.com"
-            required
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Record"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/krb5";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface RealmFormProps {
   onSubmit: (data: any) => void;
@@ -94,63 +95,79 @@ export function RealmForm({ onSubmit, onCancel, initialData }: RealmFormProps) {
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Realm Name"
-          required
-          description="Kerberos realm name (e.g., EXAMPLE.COM)"
-        >
-          <Input
-            name="realmName"
-            value={formData.realmName}
-            onChange={handleChange}
-            placeholder="EXAMPLE.COM"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Realm Name"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Master Key Name">
+            description="Kerberos realm name (e.g., EXAMPLE.COM)"
+          >
             <Input
-              name="masterKeyName"
-              value={formData.masterKeyName}
+              name="realmName"
+              value={formData.realmName}
               onChange={handleChange}
-              placeholder="kadmin/changepw"
+              placeholder="EXAMPLE.COM"
+              required
             />
           </FormField>
 
-          <FormField label="Max Life (seconds)">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Master Key Name">
+              <Input
+                name="masterKeyName"
+                value={formData.masterKeyName}
+                onChange={handleChange}
+                placeholder="kadmin/changepw"
+              />
+            </FormField>
+
+            <FormField label="Max Life (seconds)">
+              <Input
+                name="maxLife"
+                type="number"
+                value={formData.maxLife}
+                onChange={handleChange}
+                placeholder="86400"
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Supported KAs (JSON)">
+            <textarea
+              name="supportedKas"
+              value={formData.supportedKas}
+              onChange={handleTextAreaChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
+              rows={3}
+              placeholder='["kdc", "kadmin"]'
+            />
+          </FormField>
+
+          <FormField label="Max Renew (seconds)">
             <Input
-              name="maxLife"
+              name="maxRenew"
               type="number"
-              value={formData.maxLife}
+              value={formData.maxRenew}
               onChange={handleChange}
-              placeholder="86400"
+              placeholder="604800"
             />
           </FormField>
         </div>
 
-        <FormField label="Supported KAs (JSON)">
-          <textarea
-            name="supportedKas"
-            value={formData.supportedKas}
-            onChange={handleTextAreaChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
-            rows={3}
-            placeholder='["kdc", "kadmin"]'
-          />
-        </FormField>
-
-        <FormField label="Max Renew (seconds)">
-          <Input
-            name="maxRenew"
-            type="number"
-            value={formData.maxRenew}
-            onChange={handleChange}
-            placeholder="604800"
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Realm"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

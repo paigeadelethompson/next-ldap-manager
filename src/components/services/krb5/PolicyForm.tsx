@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/krb5";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface PolicyFormProps {
   onSubmit: (data: any) => void;
@@ -109,97 +110,113 @@ export function PolicyForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Policy Name"
-          required
-          description="Name of the Kerberos policy"
-        >
-          <Input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="default-policy"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Policy Name"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Min Password Length">
+            description="Name of the Kerberos policy"
+          >
             <Input
-              name="minPasswordLength"
-              type="number"
-              value={formData.minPasswordLength}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              placeholder="8"
+              placeholder="default-policy"
+              required
             />
           </FormField>
 
-          <FormField label="Min Password Age (seconds)">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Min Password Length">
+              <Input
+                name="minPasswordLength"
+                type="number"
+                value={formData.minPasswordLength}
+                onChange={handleChange}
+                placeholder="8"
+              />
+            </FormField>
+
+            <FormField label="Min Password Age (seconds)">
+              <Input
+                name="minPasswordAge"
+                type="number"
+                value={formData.minPasswordAge}
+                onChange={handleChange}
+                placeholder="0"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Max Password Age (seconds)">
+              <Input
+                name="maxPasswordAge"
+                type="number"
+                value={formData.maxPasswordAge}
+                onChange={handleChange}
+                placeholder="7776000 (90 days)"
+              />
+            </FormField>
+
+            <FormField label="Password History Length">
+              <Input
+                name="passwordHistoryLength"
+                type="number"
+                value={formData.passwordHistoryLength}
+                onChange={handleChange}
+                placeholder="5"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Lockout Duration (seconds)">
+              <Input
+                name="lockoutDuration"
+                type="number"
+                value={formData.lockoutDuration}
+                onChange={handleChange}
+                placeholder="600"
+              />
+            </FormField>
+
+            <FormField label="Failed Auth Count to Lockout">
+              <Input
+                name="failedAuthCount"
+                type="number"
+                value={formData.failedAuthCount}
+                onChange={handleChange}
+                placeholder="5"
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Reset Auth Count After (seconds)">
             <Input
-              name="minPasswordAge"
+              name="resetAuthCount"
               type="number"
-              value={formData.minPasswordAge}
+              value={formData.resetAuthCount}
               onChange={handleChange}
-              placeholder="0"
+              placeholder="3600"
             />
           </FormField>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Max Password Age (seconds)">
-            <Input
-              name="maxPasswordAge"
-              type="number"
-              value={formData.maxPasswordAge}
-              onChange={handleChange}
-              placeholder="7776000 (90 days)"
-            />
-          </FormField>
-
-          <FormField label="Password History Length">
-            <Input
-              name="passwordHistoryLength"
-              type="number"
-              value={formData.passwordHistoryLength}
-              onChange={handleChange}
-              placeholder="5"
-            />
-          </FormField>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Policy"}
+          </Button>
         </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Lockout Duration (seconds)">
-            <Input
-              name="lockoutDuration"
-              type="number"
-              value={formData.lockoutDuration}
-              onChange={handleChange}
-              placeholder="600"
-            />
-          </FormField>
-
-          <FormField label="Failed Auth Count to Lockout">
-            <Input
-              name="failedAuthCount"
-              type="number"
-              value={formData.failedAuthCount}
-              onChange={handleChange}
-              placeholder="5"
-            />
-          </FormField>
-        </div>
-
-        <FormField label="Reset Auth Count After (seconds)">
-          <Input
-            name="resetAuthCount"
-            type="number"
-            value={formData.resetAuthCount}
-            onChange={handleChange}
-            placeholder="3600"
-          />
-        </FormField>
-      </div>
+      </form>
     </div>
   );
 }

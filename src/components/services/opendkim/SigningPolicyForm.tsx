@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/opendkim";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface SigningPolicyFormProps {
   onSubmit: (data: any) => void;
@@ -90,76 +91,92 @@ export function SigningPolicyForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Domain"
-          required
-          description="Domain this policy applies to"
-        >
-          <Input
-            name="domain"
-            value={formData.domain}
-            onChange={handleChange}
-            placeholder="example.com"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Domain"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Selector">
+            description="Domain this policy applies to"
+          >
             <Input
-              name="selector"
-              value={formData.selector}
+              name="domain"
+              value={formData.domain}
               onChange={handleChange}
-              placeholder="default"
+              placeholder="example.com"
+              required
             />
           </FormField>
 
-          <FormField label="Key">
-            <Input
-              name="key"
-              value={formData.key}
-              onChange={handleChange}
-              placeholder="Enter key or leave blank for selector-based lookup"
-            />
-          </FormField>
-        </div>
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Selector">
+              <Input
+                name="selector"
+                value={formData.selector}
+                onChange={handleChange}
+                placeholder="default"
+              />
+            </FormField>
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Canonicalization">
-            <Input
-              name="canonic"
-              value={formData.canonic}
-              onChange={handleChange}
-              placeholder="relaxed:relaxed"
-            />
-          </FormField>
+            <FormField label="Key">
+              <Input
+                name="key"
+                value={formData.key}
+                onChange={handleChange}
+                placeholder="Enter key or leave blank for selector-based lookup"
+              />
+            </FormField>
+          </div>
 
-          <FormField label="Signing Algorithm">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Canonicalization">
+              <Input
+                name="canonic"
+                value={formData.canonic}
+                onChange={handleChange}
+                placeholder="relaxed:relaxed"
+              />
+            </FormField>
+
+            <FormField label="Signing Algorithm">
+              <select
+                name="signAlgorithm"
+                value={formData.signAlgorithm}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="rsa-sha256">RSA-SHA256</option>
+                <option value="rsa-sha1">RSA-SHA1</option>
+              </select>
+            </FormField>
+          </div>
+
+          <FormField label="Apply to Sub-Domains">
             <select
-              name="signAlgorithm"
-              value={formData.signAlgorithm}
+              name="subdomains"
+              value={formData.subdomains}
               onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <option value="rsa-sha256">RSA-SHA256</option>
-              <option value="rsa-sha1">RSA-SHA1</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
             </select>
           </FormField>
         </div>
 
-        <FormField label="Apply to Sub-Domains">
-          <select
-            name="subdomains"
-            value={formData.subdomains}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Signing Policy"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

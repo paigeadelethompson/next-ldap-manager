@@ -77,6 +77,109 @@ export default function NewEntryPage({
   const [error, setError] = useState<string | null>(null);
   const [createdEntry, setCreatedEntry] = useState<any>(null);
 
+  // Import forms dynamically based on entry type
+  let FormComponent: React.FC<{
+    onSubmit: (data: any) => void;
+    onCancel: () => void;
+  }>;
+  let service = resolvedParams.service;
+
+  switch (entryType) {
+    // OpenLDAP
+    case "user":
+      FormComponent = UserForm;
+      break;
+    case "group":
+      FormComponent = GroupForm;
+      break;
+    case "ou":
+      FormComponent = OuForm;
+      break;
+
+    // PowerDNS
+    case "zone":
+      FormComponent = ZoneForm;
+      break;
+    case "record":
+      FormComponent = RecordForm;
+      break;
+
+    // FreeRADIUS
+    case "profile":
+      FormComponent = ProfileForm;
+      break;
+    case "nas":
+      FormComponent = NASForm;
+      break;
+    case "attribute":
+      FormComponent = AttributeForm;
+      break;
+
+    // Asterisk
+    case "extension":
+      FormComponent = DialplanForm;
+      break;
+    case "trunk":
+      FormComponent = SipAccountForm;
+      break;
+    case "voicemail":
+      FormComponent = VoicemailForm;
+      break;
+    case "sipAccount":
+      FormComponent = SipAccountForm;
+      break;
+    case "iaxAccount":
+      FormComponent = IaxAccountForm;
+      break;
+
+    // Kerberos
+    case "principal":
+      FormComponent = PrincipalForm;
+      break;
+    case "realm":
+      FormComponent = RealmForm;
+      break;
+    case "policy":
+      FormComponent = PolicyForm;
+      break;
+
+    // Netcrave
+    case "template":
+      FormComponent = TemplateForm;
+      break;
+    case "certificate":
+      FormComponent = CertificateForm;
+      break;
+    case "icapService":
+      FormComponent = IcapServiceForm;
+      break;
+
+    // OpenDKIM
+    case "domain":
+      FormComponent = DomainForm;
+      break;
+    case "key":
+      FormComponent = SelectorForm;
+      break;
+    case "signingPolicy":
+      FormComponent = SigningPolicyForm;
+      break;
+
+    // Sendmail
+    case "alias":
+      FormComponent = AliasForm;
+      break;
+    case "map":
+      FormComponent = MapForm;
+      break;
+    case "class":
+      FormComponent = ClassForm;
+      break;
+
+    default:
+      FormComponent = UserForm;
+  }
+
   async function handleSubmit(data: any) {
     setCreatedEntry(data);
     setError(null);
@@ -92,201 +195,13 @@ export default function NewEntryPage({
     }
   }
 
-  const renderForm = () => {
-    const service = resolvedParams.service;
+  const handleFormSubmit = async (data: any) => {
+    // Form component handles its own graphql request, this is just post-submit
+    handleSubmit(data);
+  };
 
-    switch (entryType) {
-      // OpenLDAP
-      case "user":
-        return (
-          <UserForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "group":
-        return (
-          <GroupForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "ou":
-        return (
-          <OuForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // PowerDNS
-      case "zone":
-        return (
-          <ZoneForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "record":
-        return (
-          <RecordForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // FreeRADIUS (profiles are used as users, NAS for clients)
-      case "profile":
-        return (
-          <ProfileForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "nas":
-        return (
-          <NASForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "attribute":
-        return (
-          <AttributeForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // Asterisk
-      case "extension":
-        return (
-          <DialplanForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "trunk":
-        return (
-          <SipAccountForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "voicemail":
-        return (
-          <VoicemailForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "sipAccount":
-        return (
-          <SipAccountForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "iaxAccount":
-        return (
-          <IaxAccountForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // Kerberos
-      case "principal":
-        return (
-          <PrincipalForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "realm":
-        return (
-          <RealmForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "policy":
-        return (
-          <PolicyForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // Netcrave
-      case "template":
-        return (
-          <TemplateForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "certificate":
-        return (
-          <CertificateForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "icapService":
-        return (
-          <IcapServiceForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // OpenDKIM
-      case "domain":
-        return (
-          <DomainForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "key":
-        return (
-          <SelectorForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "signingPolicy":
-        return (
-          <SigningPolicyForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-
-      // Sendmail
-      case "alias":
-        return (
-          <AliasForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "map":
-        return (
-          <MapForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-      case "class":
-        return (
-          <ClassForm
-            onSubmit={handleSubmit}
-            onCancel={() => router.push(`/${resolvedParams.service}`)}
-          />
-        );
-    }
+  const onCancel = () => {
+    router.push(`/${resolvedParams.service}`);
   };
 
   const serviceConfig = getServiceConfig(resolvedParams.service);
@@ -323,28 +238,7 @@ export default function NewEntryPage({
             {error}
           </div>
         )}
-        <div className="card-content">{renderForm()}</div>
-        <div className="action-buttons">
-          <Button
-            variant="secondary"
-            onClick={() => router.push(`/${resolvedParams.service}`)}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            disabled={loading}
-            onClick={() => {
-              setLoading(true);
-              setError("Please fill out the form and submit it");
-              setTimeout(() => setLoading(false), 1000);
-            }}
-          >
-            {loading
-              ? "Creating..."
-              : `Create ${entryType.charAt(0).toUpperCase() + entryType.slice(1)}`}
-          </Button>
-        </div>
+        <FormComponent onSubmit={handleFormSubmit} onCancel={onCancel} />
       </Card>
     </div>
   );

@@ -9,6 +9,7 @@ import {
 } from "@/lib/graphql/krb5";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface PrincipalFormProps {
   onSubmit: (data: any) => void;
@@ -93,56 +94,72 @@ export function PrincipalForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Principal Name"
-          required
-          description="Principal name (e.g., user@EXAMPLE.COM)"
-        >
-          <Input
-            name="principalName"
-            value={formData.principalName}
-            onChange={handleChange}
-            placeholder="user@EXAMPLE.COM"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Principal Name"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Realm">
+            description="Principal name (e.g., user@EXAMPLE.COM)"
+          >
             <Input
-              name="realm"
-              value={formData.realm}
+              name="principalName"
+              value={formData.principalName}
               onChange={handleChange}
-              placeholder="EXAMPLE.COM"
+              placeholder="user@EXAMPLE.COM"
+              required
+            />
+          </FormField>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Realm">
+              <Input
+                name="realm"
+                value={formData.realm}
+                onChange={handleChange}
+                placeholder="EXAMPLE.COM"
+              />
+            </FormField>
+          </div>
+
+          {!initialData && (
+            <FormField label="Initial Password" required>
+              <Input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter initial password"
+                required
+              />
+            </FormField>
+          )}
+
+          <FormField label="Flags (JSON)">
+            <textarea
+              name="flags"
+              value={formData.flags}
+              onChange={handleTextAreaChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
+              rows={3}
+              placeholder='["PREAUTH", "DONT_EXPIRE_PASSWD"]'
             />
           </FormField>
         </div>
 
-        {!initialData && (
-          <FormField label="Initial Password" required>
-            <Input
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter initial password"
-              required
-            />
-          </FormField>
-        )}
-
-        <FormField label="Flags (JSON)">
-          <textarea
-            name="flags"
-            value={formData.flags}
-            onChange={handleTextAreaChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
-            rows={3}
-            placeholder='["PREAUTH", "DONT_EXPIRE_PASSWD"]'
-          />
-        </FormField>
-      </div>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Principal"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

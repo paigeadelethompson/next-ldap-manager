@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/asterisk";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface IaxAccountFormProps {
   onSubmit: (data: any) => void;
@@ -91,116 +92,132 @@ export function IaxAccountForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Account ID"
-          required
-          description="IAX account username/extension"
-        >
-          <Input
-            name="accountid"
-            value={formData.accountid}
-            onChange={handleChange}
-            placeholder="1000"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Account ID"
             required
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Secret (Password)" required>
+            description="IAX account username/extension"
+          >
             <Input
-              name="secret"
-              type="password"
-              value={formData.secret}
+              name="accountid"
+              value={formData.accountid}
               onChange={handleChange}
-              placeholder="secure-password"
+              placeholder="1000"
               required
             />
           </FormField>
 
-          <FormField label="Context">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Secret (Password)" required>
+              <Input
+                name="secret"
+                type="password"
+                value={formData.secret}
+                onChange={handleChange}
+                placeholder="secure-password"
+                required
+              />
+            </FormField>
+
+            <FormField label="Context">
+              <Input
+                name="context"
+                value={formData.context}
+                onChange={handleChange}
+                placeholder="default"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Host">
+              <Input
+                name="host"
+                value={formData.host}
+                onChange={handleChange}
+                placeholder="dynamic"
+              />
+            </FormField>
+
+            <FormField label="Trunks">
+              <select
+                name="trunks"
+                value={formData.trunks}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Transfer">
+              <Input
+                name="transfer"
+                value={formData.transfer}
+                onChange={handleChange}
+                placeholder="yes"
+              />
+            </FormField>
+
+            <FormField label="Password">
+              <Input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="password"
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Call Group">
+              <Input
+                name="callgroup"
+                value={formData.callgroup}
+                onChange={handleChange}
+                placeholder="1,2,3"
+              />
+            </FormField>
+
+            <FormField label="Pickup Group">
+              <Input
+                name="pickupgroup"
+                value={formData.pickupgroup}
+                onChange={handleChange}
+                placeholder="1,2,3"
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Mailboxes">
             <Input
-              name="context"
-              value={formData.context}
+              name="mailboxes"
+              value={formData.mailboxes}
               onChange={handleChange}
-              placeholder="default"
+              placeholder="1000@default,1001@default"
             />
           </FormField>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Host">
-            <Input
-              name="host"
-              value={formData.host}
-              onChange={handleChange}
-              placeholder="dynamic"
-            />
-          </FormField>
-
-          <FormField label="Trunks">
-            <select
-              name="trunks"
-              value={formData.trunks}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </FormField>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create IAX Account"}
+          </Button>
         </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Transfer">
-            <Input
-              name="transfer"
-              value={formData.transfer}
-              onChange={handleChange}
-              placeholder="yes"
-            />
-          </FormField>
-
-          <FormField label="Password">
-            <Input
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="password"
-            />
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Call Group">
-            <Input
-              name="callgroup"
-              value={formData.callgroup}
-              onChange={handleChange}
-              placeholder="1,2,3"
-            />
-          </FormField>
-
-          <FormField label="Pickup Group">
-            <Input
-              name="pickupgroup"
-              value={formData.pickupgroup}
-              onChange={handleChange}
-              placeholder="1,2,3"
-            />
-          </FormField>
-        </div>
-
-        <FormField label="Mailboxes">
-          <Input
-            name="mailboxes"
-            value={formData.mailboxes}
-            onChange={handleChange}
-            placeholder="1000@default,1001@default"
-          />
-        </FormField>
-      </div>
+      </form>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "@/lib/graphql/netcrave";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { Button } from "@/components/ui/Button";
 
 interface TemplateFormProps {
   onSubmit: (data: any) => void;
@@ -108,86 +109,102 @@ export function TemplateForm({
         </div>
       )}
 
-      <div className="space-y-6">
-        <FormField
-          label="Template Name"
-          required
-          description="Name of the certificate template"
-        >
-          <Input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="server-cert"
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <div className="space-y-6">
+          <FormField
+            label="Template Name"
             required
-          />
-        </FormField>
-
-        <FormField label="Description">
-          <Input
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Server certificate template"
-          />
-        </FormField>
-
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Subject DN">
+            description="Name of the certificate template"
+          >
             <Input
-              name="subject"
-              value={formData.subject}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              placeholder="/CN=certificate"
+              placeholder="server-cert"
+              required
             />
           </FormField>
 
-          <FormField label="Key Type">
-            <select
-              name="keyType"
-              value={formData.keyType}
+          <FormField label="Description">
+            <Input
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="RSA">RSA</option>
-              <option value="EC">EC (Elliptic Curve)</option>
-            </select>
+              placeholder="Server certificate template"
+            />
+          </FormField>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Subject DN">
+              <Input
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                placeholder="/CN=certificate"
+              />
+            </FormField>
+
+            <FormField label="Key Type">
+              <select
+                name="keyType"
+                value={formData.keyType}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="RSA">RSA</option>
+                <option value="EC">EC (Elliptic Curve)</option>
+              </select>
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Key Size">
+              <Input
+                name="keySize"
+                type="number"
+                value={formData.keySize}
+                onChange={handleChange}
+                placeholder="2048"
+              />
+            </FormField>
+
+            <FormField label="Validity Days">
+              <Input
+                name="validityDays"
+                type="number"
+                value={formData.validityDays}
+                onChange={handleChange}
+                placeholder="365"
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Extensions (JSON)">
+            <textarea
+              name="extensions"
+              value={formData.extensions}
+              onChange={handleTextAreaChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
+              rows={5}
+              placeholder='{"basicConstraints": "CA:FALSE", "keyUsage": "digitalSignature,keyEncipherment"}'
+            />
           </FormField>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField label="Key Size">
-            <Input
-              name="keySize"
-              type="number"
-              value={formData.keySize}
-              onChange={handleChange}
-              placeholder="2048"
-            />
-          </FormField>
-
-          <FormField label="Validity Days">
-            <Input
-              name="validityDays"
-              type="number"
-              value={formData.validityDays}
-              onChange={handleChange}
-              placeholder="365"
-            />
-          </FormField>
+        <div className="action-buttons mt-6">
+          <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating..." : "Create Template"}
+          </Button>
         </div>
-
-        <FormField label="Extensions (JSON)">
-          <textarea
-            name="extensions"
-            value={formData.extensions}
-            onChange={handleTextAreaChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 font-mono text-sm"
-            rows={5}
-            placeholder='{"basicConstraints": "CA:FALSE", "keyUsage": "digitalSignature,keyEncipherment"}'
-          />
-        </FormField>
-      </div>
+      </form>
     </div>
   );
 }
