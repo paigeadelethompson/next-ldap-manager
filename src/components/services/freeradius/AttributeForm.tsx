@@ -14,14 +14,14 @@ interface AttributeFormProps {
 }
 
 const OPERATORS = [
-  { value: ':=', label := 'Assign (:=)' },
-  { value: '+=', label := 'Add (+=)' },
-  { value: '==', label := 'Match (==)' },
-  { value: '!=', label := 'Not equal (!=)' },
-  { value: '<', label := 'Less than (<)' },
-  { value: '<=', label := 'Less or equal (<=)' },
-  { value: '>', label := 'Greater than (>)' },
-  { value: '>=', label := 'Greater or equal (>=)' },
+  { value: ':=', label: 'Assign (:=)' },
+  { value: '+=', label: 'Add (+=)' },
+  { value: '==', label: 'Match (==)' },
+  { value: '!=', label: 'Not equal (!=)' },
+  { value: '<', label: 'Less than (<)' },
+  { value: '<=', label: 'Less or equal (<=)' },
+  { value: '>', label: 'Greater than (>)' },
+  { value: '>=', label: 'Greater or equal (>=)' },
 ];
 
 export function AttributeForm({ onSubmit, onCancel, initialData }: AttributeFormProps) {
