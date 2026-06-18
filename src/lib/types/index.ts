@@ -34,39 +34,35 @@ export interface UpdateResult extends LdapOperationResult {
 
 export interface DeleteResult extends LdapOperationResult {}
 
-// Common input types for forms
-export interface CreateUserInput {
-  cn: string;
-  uid?: string;
-  mail?: string;
-  userPassword?: string;
-  objectClass?: string[];
-}
-
-export interface UpdateUserInput {
-  cn?: string;
-  uid?: string;
-  mail?: string;
-  userPassword?: string;
-}
-
-export interface CreateGroupInput {
-  cn: string;
-  gidNumber?: string;
-  memberUid?: string[];
-  objectClass?: string[];
-}
-
-export interface UpdateGroupInput {
-  cn?: string;
-  gidNumber?: string;
-  memberUid?: string[];
-}
-
-// Generic entry types
+// Input types for generic LDAP entries
 export interface EntryFilter {
   baseDN: string;
   filter: string;
   scope?: 'base' | 'onelevel' | 'subtree';
   attributes?: string[];
 }
+
+export interface CreateEntryInput {
+  dn: string;
+  attributes: Record<string, unknown>;
+}
+
+export interface UpdateEntryInput {
+  changes: LdapChange[];
+}
+
+export interface LdapChange {
+  attribute: string;
+  values: unknown[];
+  operation: 'add' | 'replace' | 'delete';
+}
+
+// Re-export service-specific types
+export * from './openldap';
+export * from './asterisk';
+export * from './freeradius';
+export * from './krb5';
+export * from './netcrave';
+export * from './opendkim';
+export * from './powerdns';
+export * from './sendmail';

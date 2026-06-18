@@ -12,6 +12,14 @@ export interface OpenLdapUser {
   telephoneNumber?: string;
   title?: string;
   ou?: string;
+  // Extended from inetOrgPerson
+  displayName?: string;
+  employeeNumber?: string;
+  employeeType?: string;
+  carLicense?: string;
+  departmentNumber?: string;
+  manager?: string;
+  preferredLanguage?: string;
 }
 
 export interface OpenLdapGroup {
@@ -36,7 +44,7 @@ export interface OpenLdapEntry {
   attributes: Record<string, unknown>;
 }
 
-// Input types for forms
+// Input types for user operations
 export interface CreateUserInput {
   cn: string;
   uid?: string;
@@ -47,6 +55,10 @@ export interface CreateUserInput {
   telephoneNumber?: string;
   title?: string;
   ou?: string;
+  // Extended attributes
+  displayName?: string;
+  employeeNumber?: string;
+  employeeType?: string;
 }
 
 export interface UpdateUserInput {
@@ -59,6 +71,10 @@ export interface UpdateUserInput {
   telephoneNumber?: string;
   title?: string;
   ou?: string;
+  // Extended attributes
+  displayName?: string;
+  employeeNumber?: string;
+  employeeType?: string;
 }
 
 export interface CreateGroupInput {
