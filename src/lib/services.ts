@@ -1,4 +1,4 @@
-export type EntryType = 'user' | 'group' | 'ou' | 'record' | 'zone' | 'extension' | 'trunk' | 'principal' | 'realm' | 'domain' | 'key' | 'alias';
+export type EntryType = 'user' | 'group' | 'ou' | 'record' | 'zone' | 'extension' | 'trunk' | 'principal' | 'realm' | 'domain' | 'key' | 'alias' | 'profile' | 'nas' | 'attribute' | 'voicemail' | 'sipAccount' | 'iaxAccount' | 'template' | 'certificate' | 'icapService' | 'signingPolicy';
 
 export interface ServiceConfig {
   name: string;
@@ -20,32 +20,32 @@ export const SERVICES: Record<string, ServiceConfig> = {
   freeradius: {
     name: 'freeradius',
     label: 'FreeRADIUS',
-    entryTypes: ['user', 'group'],
+    entryTypes: ['profile', 'nas', 'attribute'],
   },
   asterisk: {
     name: 'asterisk',
     label: 'Asterisk',
-    entryTypes: ['extension', 'trunk'],
+    entryTypes: ['extension', 'trunk', 'voicemail', 'sipAccount', 'iaxAccount'],
   },
   kerberos: {
     name: 'kerberos',
     label: 'Kerberos',
-    entryTypes: ['principal', 'realm'],
+    entryTypes: ['principal', 'realm', 'policy'],
   },
   netcrave: {
     name: 'netcrave',
     label: 'Netcrave',
-    entryTypes: ['user', 'group'],
+    entryTypes: ['template', 'certificate', 'icapService'],
   },
   opendkim: {
     name: 'opendkim',
     label: 'OpenDKIM',
-    entryTypes: ['domain', 'key'],
+    entryTypes: ['domain', 'key', 'signingPolicy'],
   },
   sendmail: {
     name: 'sendmail',
     label: 'Sendmail',
-    entryTypes: ['user', 'alias'],
+    entryTypes: ['alias', 'map', 'class'],
   },
 };
 
