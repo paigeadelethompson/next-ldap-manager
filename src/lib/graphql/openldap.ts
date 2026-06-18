@@ -115,6 +115,178 @@ export const typeDefs = `
   }
 `;
 
+// OpenLDAP GraphQL queries and mutations for client-side use
+
+export const CREATE_USER_MUTATION = `
+  mutation CreateOpenLdapUser($input: CreateUserInput!) {
+    createOpenLdapUser(input: $input) {
+      dn
+      cn
+      uid
+      mail
+      givenName
+      sn
+      telephoneNumber
+      title
+      ou
+    }
+  }
+`;
+
+export const UPDATE_USER_MUTATION = `
+  mutation UpdateOpenLdapUser($dn: String!, $input: UpdateUserInput!) {
+    updateOpenLdapUser(dn: $dn, input: $input) {
+      dn
+      cn
+      uid
+      mail
+      givenName
+      sn
+      telephoneNumber
+      title
+      ou
+    }
+  }
+`;
+
+export const DELETE_USER_MUTATION = `
+  mutation DeleteOpenLdapUser($dn: String!) {
+    deleteOpenLdapUser(dn: $dn)
+  }
+`;
+
+export const CREATE_GROUP_MUTATION = `
+  mutation CreateOpenLdapGroup($input: CreateGroupInput!) {
+    createOpenLdapGroup(input: $input) {
+      dn
+      cn
+      gidNumber
+      memberUid
+      description
+    }
+  }
+`;
+
+export const UPDATE_GROUP_MUTATION = `
+  mutation UpdateOpenLdapGroup($dn: String!, $input: UpdateGroupInput!) {
+    updateOpenLdapGroup(dn: $dn, input: $input) {
+      dn
+      cn
+      gidNumber
+      memberUid
+      description
+    }
+  }
+`;
+
+export const DELETE_GROUP_MUTATION = `
+  mutation DeleteOpenLdapGroup($dn: String!) {
+    deleteOpenLdapGroup(dn: $dn)
+  }
+`;
+
+export const CREATE_OU_MUTATION = `
+  mutation CreateOpenLdapOu($input: CreateOuInput!) {
+    createOpenLdapOu(input: $input) {
+      dn
+      ou
+      description
+    }
+  }
+`;
+
+export const UPDATE_OU_MUTATION = `
+  mutation UpdateOpenLdapOu($dn: String!, $input: UpdateOuInput!) {
+    updateOpenLdapOu(dn: $dn, input: $input) {
+      dn
+      ou
+      description
+    }
+  }
+`;
+
+export const DELETE_OU_MUTATION = `
+  mutation DeleteOpenLdapOu($dn: String!) {
+    deleteOpenLdapOu(dn: $dn)
+  }
+`;
+
+export const FETCH_USERS_QUERY = `
+  query OpenLdapUsers($baseDN: String, $filter: String) {
+    openLdapUsers(baseDN: $baseDN, filter: $filter) {
+      dn
+      cn
+      uid
+      mail
+      givenName
+      sn
+      telephoneNumber
+      title
+      ou
+    }
+  }
+`;
+
+export const FETCH_GROUPS_QUERY = `
+  query OpenLdapGroups($baseDN: String, $filter: String) {
+    openLdapGroups(baseDN: $baseDN, filter: $filter) {
+      dn
+      cn
+      gidNumber
+      memberUid
+      description
+    }
+  }
+`;
+
+export const FETCH_OUS_QUERY = `
+  query OpenLdapOus($baseDN: String, $filter: String) {
+    openLdapOus(baseDN: $baseDN, filter: $filter) {
+      dn
+      ou
+      description
+    }
+  }
+`;
+
+export const FETCH_USER_QUERY = `
+  query OpenLdapUser($dn: String!) {
+    openLdapUser(dn: $dn) {
+      dn
+      cn
+      uid
+      mail
+      givenName
+      sn
+      telephoneNumber
+      title
+      ou
+    }
+  }
+`;
+
+export const FETCH_GROUP_QUERY = `
+  query OpenLdapGroup($dn: String!) {
+    openLdapGroup(dn: $dn) {
+      dn
+      cn
+      gidNumber
+      memberUid
+      description
+    }
+  }
+`;
+
+export const FETCH_OU_QUERY = `
+  query OpenLdapOu($dn: String!) {
+    openLdapOu(dn: $dn) {
+      dn
+      ou
+      description
+    }
+  }
+`;
+
 // OpenLDAP query resolvers
 export const queries = {
   // Users
@@ -128,7 +300,14 @@ export const queries = {
   openLdapUser: async (_parent: unknown, args: { dn: string }, context: any) => {
     if (!context.ldapClient) throw new Error('LDAP client not available');
     const filter = `(dn=${args.dn})`;
-    const results = await context.ldapClient.search({ baseDN: args.dn, filter, scope: 'base', attributes: ['*'] });
+    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    // Extract the parent DN from the user's DN for search
+    const parts = args.dn.split(',');
+    if (parts.length > 1) {
+      parts.shift(); // Remove the first RDN (e.g., uid=jdoe)
+    }
+    const searchBase = parts.join(',');
+    const results = await context.ldapClient.search({ baseDN: searchBase || baseDN, filter, scope: 'subtree', attributes: ['*'] });
     return results.length > 0 ? results[0] : null;
   },
 
@@ -143,7 +322,14 @@ export const queries = {
   openLdapGroup: async (_parent: unknown, args: { dn: string }, context: any) => {
     if (!context.ldapClient) throw new Error('LDAP client not available');
     const filter = `(dn=${args.dn})`;
-    const results = await context.ldapClient.search({ baseDN: args.dn, filter, scope: 'base', attributes: ['*'] });
+    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    // Extract the parent DN from the group's DN for search
+    const parts = args.dn.split(',');
+    if (parts.length > 1) {
+      parts.shift(); // Remove the first RDN (e.g., cn=developers)
+    }
+    const searchBase = parts.join(',');
+    const results = await context.ldapClient.search({ baseDN: searchBase || baseDN, filter, scope: 'subtree', attributes: ['*'] });
     return results.length > 0 ? results[0] : null;
   },
 
@@ -158,7 +344,14 @@ export const queries = {
   openLdapOu: async (_parent: unknown, args: { dn: string }, context: any) => {
     if (!context.ldapClient) throw new Error('LDAP client not available');
     const filter = `(dn=${args.dn})`;
-    const results = await context.ldapClient.search({ baseDN: args.dn, filter, scope: 'base', attributes: ['*'] });
+    const baseDN = process.env.LDAP_BASE_DN || 'dc=netcrave,dc=local';
+    // Extract the parent DN from the OU's DN for search
+    const parts = args.dn.split(',');
+    if (parts.length > 1) {
+      parts.shift(); // Remove the first RDN (e.g., ou=Engineering)
+    }
+    const searchBase = parts.join(',');
+    const results = await context.ldapClient.search({ baseDN: searchBase || baseDN, filter, scope: 'subtree', attributes: ['*'] });
     return results.length > 0 ? results[0] : null;
   },
 };

@@ -119,3 +119,164 @@ export const queries = {};
 export const mutations = {};
 
 export const resolvers = {};
+
+// Netcrave GraphQL queries and mutations for client-side use
+
+export const CREATE_NETCRAVE_TEMPLATE_MUTATION = `
+  mutation CreateNetcraveTemplate($input: CreateTemplateInput!) {
+    createNetcraveTemplate(input: $input) {
+      dn
+      name
+      description
+      subject
+      keyType
+      keySize
+      validityDays
+      extensions
+    }
+  }
+`;
+
+export const UPDATE_NETCRAVE_TEMPLATE_MUTATION = `
+  mutation UpdateNetcraveTemplate($dn: String!, $input: UpdateTemplateInput!) {
+    updateNetcraveTemplate(dn: $dn, input: $input) {
+      dn
+      name
+      description
+      subject
+      keyType
+      keySize
+      validityDays
+      extensions
+    }
+  }
+`;
+
+export const DELETE_NETCRAVE_TEMPLATE_MUTATION = `
+  mutation DeleteNetcraveTemplate($dn: String!) {
+    deleteNetcraveTemplate(dn: $dn)
+  }
+`;
+
+export const ISSUE_NETCRAVE_CERTIFICATE_MUTATION = `
+  mutation IssueNetcraveCertificate($input: IssueCertificateInput!) {
+    issueNetcraveCertificate(input: $input) {
+      dn
+      cn
+      serialNumber
+      issuer
+      subject
+      notBefore
+      notAfter
+      status
+      keyType
+      keySize
+      san
+      crlDistributionPoints
+      ocspResponder
+    }
+  }
+`;
+
+export const REVOKE_NETCRAVE_CERTIFICATE_MUTATION = `
+  mutation RevokeNetcraveCertificate($dn: String!, $reason: String) {
+    revokeNetcraveCertificate(dn: $dn, reason: $reason) {
+      dn
+      cn
+      status
+    }
+  }
+`;
+
+export const RESTORE_NETCRAVE_CERTIFICATE_MUTATION = `
+  mutation RestoreNetcraveCertificate($dn: String!) {
+    restoreNetcraveCertificate(dn: $dn) {
+      dn
+      cn
+      status
+    }
+  }
+`;
+
+export const CREATE_NETCRAVE_ICAP_SERVICE_MUTATION = `
+  mutation CreateNetcraveIcapService($input: CreateIcapServiceInput!) {
+    createNetcraveIcapService(input: $input) {
+      dn
+      name
+      hostname
+      port
+      uri
+      version
+      enabled
+    }
+  }
+`;
+
+export const UPDATE_NETCRAVE_ICAP_SERVICE_MUTATION = `
+  mutation UpdateNetcraveIcapService($dn: String!, $input: UpdateIcapServiceInput!) {
+    updateNetcraveIcapService(dn: $dn, input: $input) {
+      dn
+      name
+      hostname
+      port
+      uri
+      version
+      enabled
+    }
+  }
+`;
+
+export const DELETE_NETCRAVE_ICAP_SERVICE_MUTATION = `
+  mutation DeleteNetcraveIcapService($dn: String!) {
+    deleteNetcraveIcapService(dn: $dn)
+  }
+`;
+
+export const FETCH_NETCRAVE_TEMPLATES_QUERY = `
+  query NetcraveTemplates($filter: String) {
+    netcraveTemplates(filter: $filter) {
+      dn
+      name
+      description
+      subject
+      keyType
+      keySize
+      validityDays
+      extensions
+    }
+  }
+`;
+
+export const FETCH_NETCRAVE_CERTIFICATES_QUERY = `
+  query NetcraveCertificates($filter: String, $status: String) {
+    netcraveCertificates(filter: $filter, status: $status) {
+      dn
+      cn
+      serialNumber
+      issuer
+      subject
+      notBefore
+      notAfter
+      status
+      keyType
+      keySize
+      san
+      crlDistributionPoints
+      ocspResponder
+    }
+  }
+`;
+
+export const FETCH_NETCRAVE_ICAP_SERVICES_QUERY = `
+  query NetcraveIcapServices($filter: String) {
+    netcraveIcapServices(filter: $filter) {
+      dn
+      name
+      hostname
+      port
+      uri
+      version
+      enabled
+    }
+  }
+`;

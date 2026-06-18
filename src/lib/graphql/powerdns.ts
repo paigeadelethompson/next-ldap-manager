@@ -214,3 +214,113 @@ export const mutations = {
 };
 
 export const resolvers = {};
+
+// PowerDNS GraphQL queries and mutations for client-side use
+
+export const CREATE_POWERDNS_ZONE_MUTATION = `
+  mutation CreatePowerdnsZone($input: CreateZoneInput!) {
+    createPowerdnsZone(input: $input) {
+      dn
+      name
+      type
+      ttl
+      soa
+      master
+      nsec3param
+      nsec3narrow
+      presigned
+      kind
+    }
+  }
+`;
+
+export const UPDATE_POWERDNS_ZONE_MUTATION = `
+  mutation UpdatePowerdnsZone($dn: String!, $input: UpdateZoneInput!) {
+    updatePowerdnsZone(dn: $dn, input: $input) {
+      dn
+      name
+      type
+      ttl
+      soa
+      master
+      nsec3param
+      nsec3narrow
+      presigned
+      kind
+    }
+  }
+`;
+
+export const DELETE_POWERDNS_ZONE_MUTATION = `
+  mutation DeletePowerdnsZone($dn: String!) {
+    deletePowerdnsZone(dn: $dn)
+  }
+`;
+
+export const CREATE_POWERDNS_RECORD_MUTATION = `
+  mutation CreatePowerdnsRecord($input: CreateRecordInput!) {
+    createPowerdnsRecord(input: $input) {
+      dn
+      zoneName
+      name
+      type
+      ttl
+      priority
+      content
+      disabled
+    }
+  }
+`;
+
+export const UPDATE_POWERDNS_RECORD_MUTATION = `
+  mutation UpdatePowerdnsRecord($dn: String!, $input: UpdateRecordInput!) {
+    updatePowerdnsRecord(dn: $dn, input: $input) {
+      dn
+      zoneName
+      name
+      type
+      ttl
+      priority
+      content
+      disabled
+    }
+  }
+`;
+
+export const DELETE_POWERDNS_RECORD_MUTATION = `
+  mutation DeletePowerdnsRecord($dn: String!) {
+    deletePowerdnsRecord(dn: $dn)
+  }
+`;
+
+export const FETCH_POWERDNS_ZONES_QUERY = `
+  query PowerdnsZones($filter: String, $kind: String) {
+    powerdnsZones(filter: $filter, kind: $kind) {
+      dn
+      name
+      type
+      ttl
+      soa
+      master
+      nsec3param
+      nsec3narrow
+      presigned
+      kind
+    }
+  }
+`;
+
+export const FETCH_POWERDNS_RECORDS_QUERY = `
+  query PowerdnsRecords($zoneName: String!, $filter: String, $type: String) {
+    powerdnsRecords(zoneName: $zoneName, filter: $filter, type: $type) {
+      dn
+      zoneName
+      name
+      type
+      ttl
+      priority
+      content
+      disabled
+    }
+  }
+`;

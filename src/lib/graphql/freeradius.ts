@@ -251,3 +251,134 @@ export const mutations = {
 };
 
 export const resolvers = {};
+
+// FreeRADIUS GraphQL queries and mutations for client-side use
+
+export const CREATE_FREERADIUS_PROFILE_MUTATION = `
+  mutation CreateFreeradiusProfile($input: CreateProfileInput!) {
+    createFreeradiusProfile(input: $input) {
+      dn
+      name
+      description
+      attributes
+    }
+  }
+`;
+
+export const UPDATE_FREERADIUS_PROFILE_MUTATION = `
+  mutation UpdateFreeradiusProfile($dn: String!, $input: UpdateProfileInput!) {
+    updateFreeradiusProfile(dn: $dn, input: $input) {
+      dn
+      name
+      description
+      attributes
+    }
+  }
+`;
+
+export const DELETE_FREERADIUS_PROFILE_MUTATION = `
+  mutation DeleteFreeradiusProfile($dn: String!) {
+    deleteFreeradiusProfile(dn: $dn)
+  }
+`;
+
+export const CREATE_FREERADIUS_NAS_MUTATION = `
+  mutation CreateFreeradiusNas($input: CreateNasInput!) {
+    createFreeradiusNas(input: $input) {
+      dn
+      nasname
+      shortname
+      type
+      secret
+      description
+      radiusclientid
+    }
+  }
+`;
+
+export const UPDATE_FREERADIUS_NAS_MUTATION = `
+  mutation UpdateFreeradiusNas($nasname: String!, $input: UpdateNasInput!) {
+    updateFreeradiusNas(nasname: $nasname, input: $input) {
+      dn
+      nasname
+      shortname
+      type
+      secret
+      description
+      radiusclientid
+    }
+  }
+`;
+
+export const DELETE_FREERADIUS_NAS_MUTATION = `
+  mutation DeleteFreeradiusNas($nasname: String!) {
+    deleteFreeradiusNas(nasname: $nasname)
+  }
+`;
+
+export const CREATE_FREERADIUS_ATTRIBUTE_MUTATION = `
+  mutation CreateFreeradiusAttribute($input: CreateAttributeInput!) {
+    createFreeradiusAttribute(input: $input) {
+      dn
+      username
+      attribute
+      operator
+      value
+    }
+  }
+`;
+
+export const UPDATE_FREERADIUS_ATTRIBUTE_MUTATION = `
+  mutation UpdateFreeradiusAttribute($dn: String!, $input: UpdateAttributeInput!) {
+    updateFreeradiusAttribute(dn: $dn, input: $input) {
+      dn
+      username
+      attribute
+      operator
+      value
+    }
+  }
+`;
+
+export const DELETE_FREERADIUS_ATTRIBUTE_MUTATION = `
+  mutation DeleteFreeradiusAttribute($dn: String!) {
+    deleteFreeradiusAttribute(dn: $dn)
+  }
+`;
+
+export const FETCH_FREERADIUS_PROFILES_QUERY = `
+  query FreeradiusProfiles($filter: String) {
+    freeradiusProfiles(filter: $filter) {
+      dn
+      name
+      description
+      attributes
+    }
+  }
+`;
+
+export const FETCH_FREERADIUS_NASES_QUERY = `
+  query FreeradiusNases($filter: String) {
+    freeradiusNases(filter: $filter) {
+      dn
+      nasname
+      shortname
+      type
+      secret
+      description
+      radiusclientid
+    }
+  }
+`;
+
+export const FETCH_FREERADIUS_ATTRIBUTES_QUERY = `
+  query FreeradiusAttributes($username: String!, $filter: String) {
+    freeradiusAttributes(username: $username, filter: $filter) {
+      dn
+      username
+      attribute
+      operator
+      value
+    }
+  }
+`;
