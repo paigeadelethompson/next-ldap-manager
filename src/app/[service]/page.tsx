@@ -53,7 +53,9 @@ export default function ServicePage({
           filter = '(objectClass=posixAccount)';
         }
 
-        const result = await graphqlRequest({
+        const result = await graphqlRequest<{
+          ldapEntries?: Array<{ dn: string; attributes: Record<string, unknown> }>;
+        }>({
           query: `
             query($baseDN: String!, $filter: String) {
               ldapEntries(baseDN: $baseDN, filter: $filter, scope: "subtree", attributes: ["*"]) {
@@ -65,7 +67,7 @@ export default function ServicePage({
           variables: { baseDN, filter },
         });
 
-        setEntries(result.ldapEntries || []);
+        setEntries(result?.ldapEntries ?? []);
       } catch (err) {
         console.error('Error fetching entries:', err);
         setError(err instanceof Error ? err.message : 'Failed to load entries');
