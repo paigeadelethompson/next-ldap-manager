@@ -29,7 +29,11 @@ interface PrincipalsTableProps {
   error: string | null;
 }
 
-export function PrincipalsTable({ principals, loading, error }: PrincipalsTableProps) {
+export function PrincipalsTable({
+  principals,
+  loading,
+  error,
+}: PrincipalsTableProps) {
   if (loading) {
     return (
       <Card>

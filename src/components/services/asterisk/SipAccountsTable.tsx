@@ -29,7 +29,11 @@ interface SipAccountsTableProps {
   error: string | null;
 }
 
-export function SipAccountsTable({ sipAccounts, loading, error }: SipAccountsTableProps) {
+export function SipAccountsTable({
+  sipAccounts,
+  loading,
+  error,
+}: SipAccountsTableProps) {
   if (loading) {
     return (
       <Card>

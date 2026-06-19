@@ -29,7 +29,11 @@ interface SigningPoliciesTableProps {
   error: string | null;
 }
 
-export function SigningPoliciesTable({ policies, loading, error }: SigningPoliciesTableProps) {
+export function SigningPoliciesTable({
+  policies,
+  loading,
+  error,
+}: SigningPoliciesTableProps) {
   if (loading) {
     return (
       <Card>
@@ -74,7 +78,9 @@ export function SigningPoliciesTable({ policies, loading, error }: SigningPolici
               {COLUMNS.map((col) => {
                 const value = (policy as Record<string, unknown>)[col.key];
                 return (
-                  <TableCell key={`${policy.domain}-${policy.selector}-${col.key}`}>
+                  <TableCell
+                    key={`${policy.domain}-${policy.selector}-${col.key}`}
+                  >
                     {Array.isArray(value)
                       ? value.join(", ")
                       : typeof value === "object"

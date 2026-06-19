@@ -29,7 +29,11 @@ interface AttributesTableProps {
   error: string | null;
 }
 
-export function AttributesTable({ attributes, loading, error }: AttributesTableProps) {
+export function AttributesTable({
+  attributes,
+  loading,
+  error,
+}: AttributesTableProps) {
   if (loading) {
     return (
       <Card>

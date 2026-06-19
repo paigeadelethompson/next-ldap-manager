@@ -291,67 +291,135 @@ export default function ServicePage({
         <ZonesTable zones={entries as any} loading={loading} error={error} />
       ) : resolvedParams.service === "powerdns" &&
         serviceConfig.entryTypes.includes("record") ? (
-        <RecordsTable records={entries as any} loading={loading} error={error} />
+        <RecordsTable
+          records={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "freeradius" &&
         serviceConfig.entryTypes.includes("profile") ? (
-        <ProfilesTable profiles={entries as any} loading={loading} error={error} />
+        <ProfilesTable
+          profiles={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "freeradius" &&
         serviceConfig.entryTypes.includes("nas") ? (
         <NASsTable nass={entries as any} loading={loading} error={error} />
       ) : resolvedParams.service === "freeradius" &&
         serviceConfig.entryTypes.includes("attribute") ? (
-        <AttributesTable attributes={entries as any} loading={loading} error={error} />
+        <AttributesTable
+          attributes={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "asterisk" &&
         serviceConfig.entryTypes.includes("extension") ? (
-        <ExtensionsTable extensions={entries as any} loading={loading} error={error} />
+        <ExtensionsTable
+          extensions={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "asterisk" &&
         serviceConfig.entryTypes.includes("trunk") ? (
         <TrunksTable trunks={entries as any} loading={loading} error={error} />
       ) : resolvedParams.service === "asterisk" &&
         serviceConfig.entryTypes.includes("voicemail") ? (
-        <VoicemailsTable voicemails={entries as any} loading={loading} error={error} />
+        <VoicemailsTable
+          voicemails={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "asterisk" &&
         serviceConfig.entryTypes.includes("sipAccount") ? (
-        <SipAccountsTable sipAccounts={entries as any} loading={loading} error={error} />
+        <SipAccountsTable
+          sipAccounts={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "asterisk" &&
         serviceConfig.entryTypes.includes("iaxAccount") ? (
-        <IaxAccountsTable iaxAccounts={entries as any} loading={loading} error={error} />
+        <IaxAccountsTable
+          iaxAccounts={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "kerberos" &&
         serviceConfig.entryTypes.includes("principal") ? (
-        <PrincipalsTable principals={entries as any} loading={loading} error={error} />
+        <PrincipalsTable
+          principals={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "kerberos" &&
         serviceConfig.entryTypes.includes("realm") ? (
         <RealmsTable realms={entries as any} loading={loading} error={error} />
       ) : resolvedParams.service === "kerberos" &&
         serviceConfig.entryTypes.includes("policy") ? (
-        <PoliciesTable policies={entries as any} loading={loading} error={error} />
+        <PoliciesTable
+          policies={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "netcrave" &&
         serviceConfig.entryTypes.includes("template") ? (
-        <TemplatesTable templates={entries as any} loading={loading} error={error} />
+        <TemplatesTable
+          templates={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "netcrave" &&
         serviceConfig.entryTypes.includes("certificate") ? (
-        <CertificatesTable certificates={entries as any} loading={loading} error={error} />
+        <CertificatesTable
+          certificates={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "netcrave" &&
         serviceConfig.entryTypes.includes("icapService") ? (
-        <IcapServicesTable icapServices={entries as any} loading={loading} error={error} />
+        <IcapServicesTable
+          icapServices={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "opendkim" &&
         serviceConfig.entryTypes.includes("domain") ? (
-        <DomainsTable domains={entries as any} loading={loading} error={error} />
+        <DomainsTable
+          domains={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "opendkim" &&
         serviceConfig.entryTypes.includes("key") ? (
-        <SelectorsTable selectors={entries as any} loading={loading} error={error} />
+        <SelectorsTable
+          selectors={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "opendkim" &&
         serviceConfig.entryTypes.includes("signingPolicy") ? (
-        <SigningPoliciesTable policies={entries as any} loading={loading} error={error} />
+        <SigningPoliciesTable
+          policies={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "sendmail" &&
         serviceConfig.entryTypes.includes("alias") ? (
-        <AliasesTable aliases={entries as any} loading={loading} error={error} />
+        <AliasesTable
+          aliases={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : resolvedParams.service === "sendmail" &&
         serviceConfig.entryTypes.includes("map") ? (
         <MapsTable maps={entries as any} loading={loading} error={error} />
       ) : resolvedParams.service === "sendmail" &&
         serviceConfig.entryTypes.includes("class") ? (
-        <ClassesTable classes={entries as any} loading={loading} error={error} />
+        <ClassesTable
+          classes={entries as any}
+          loading={loading}
+          error={error}
+        />
       ) : (
         <Card>
           {loading ? (

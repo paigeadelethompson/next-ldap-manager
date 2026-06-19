@@ -29,7 +29,11 @@ interface IaxAccountsTableProps {
   error: string | null;
 }
 
-export function IaxAccountsTable({ iaxAccounts, loading, error }: IaxAccountsTableProps) {
+export function IaxAccountsTable({
+  iaxAccounts,
+  loading,
+  error,
+}: IaxAccountsTableProps) {
   if (loading) {
     return (
       <Card>

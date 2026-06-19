@@ -29,7 +29,11 @@ interface VoicemailsTableProps {
   error: string | null;
 }
 
-export function VoicemailsTable({ voicemails, loading, error }: VoicemailsTableProps) {
+export function VoicemailsTable({
+  voicemails,
+  loading,
+  error,
+}: VoicemailsTableProps) {
   if (loading) {
     return (
       <Card>

@@ -29,7 +29,11 @@ interface PoliciesTableProps {
   error: string | null;
 }
 
-export function PoliciesTable({ policies, loading, error }: PoliciesTableProps) {
+export function PoliciesTable({
+  policies,
+  loading,
+  error,
+}: PoliciesTableProps) {
   if (loading) {
     return (
       <Card>

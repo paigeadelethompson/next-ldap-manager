@@ -31,7 +31,11 @@ interface ExtensionsTableProps {
   error: string | null;
 }
 
-export function ExtensionsTable({ extensions, loading, error }: ExtensionsTableProps) {
+export function ExtensionsTable({
+  extensions,
+  loading,
+  error,
+}: ExtensionsTableProps) {
   if (loading) {
     return (
       <Card>

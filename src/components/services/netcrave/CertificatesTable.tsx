@@ -29,7 +29,11 @@ interface CertificatesTableProps {
   error: string | null;
 }
 
-export function CertificatesTable({ certificates, loading, error }: CertificatesTableProps) {
+export function CertificatesTable({
+  certificates,
+  loading,
+  error,
+}: CertificatesTableProps) {
   if (loading) {
     return (
       <Card>

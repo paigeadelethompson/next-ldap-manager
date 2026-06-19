@@ -27,7 +27,11 @@ interface TemplatesTableProps {
   error: string | null;
 }
 
-export function TemplatesTable({ templates, loading, error }: TemplatesTableProps) {
+export function TemplatesTable({
+  templates,
+  loading,
+  error,
+}: TemplatesTableProps) {
   if (loading) {
     return (
       <Card>

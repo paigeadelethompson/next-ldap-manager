@@ -29,7 +29,11 @@ interface IcapServicesTableProps {
   error: string | null;
 }
 
-export function IcapServicesTable({ icapServices, loading, error }: IcapServicesTableProps) {
+export function IcapServicesTable({
+  icapServices,
+  loading,
+  error,
+}: IcapServicesTableProps) {
   if (loading) {
     return (
       <Card>

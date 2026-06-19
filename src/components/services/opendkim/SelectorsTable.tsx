@@ -29,7 +29,11 @@ interface SelectorsTableProps {
   error: string | null;
 }
 
-export function SelectorsTable({ selectors, loading, error }: SelectorsTableProps) {
+export function SelectorsTable({
+  selectors,
+  loading,
+  error,
+}: SelectorsTableProps) {
   if (loading) {
     return (
       <Card>

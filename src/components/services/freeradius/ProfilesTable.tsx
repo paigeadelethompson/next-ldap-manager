@@ -27,7 +27,11 @@ interface ProfilesTableProps {
   error: string | null;
 }
 
-export function ProfilesTable({ profiles, loading, error }: ProfilesTableProps) {
+export function ProfilesTable({
+  profiles,
+  loading,
+  error,
+}: ProfilesTableProps) {
   if (loading) {
     return (
       <Card>
