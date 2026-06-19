@@ -18,7 +18,6 @@ export async function POST(request: Request) {
   const ldapConfig = getLdapConfig();
 
   try {
-    // Create Apollo Server with context that provides LDAP client
     const server = new ApolloServer({
       typeDefs,
       resolvers,
@@ -31,16 +30,36 @@ export async function POST(request: Request) {
       { contextValue },
     );
 
-    return Response.json(result);
+    // Check if response contains GraphQL errors (in singleResult format used by Next.js)
+    const body = (result as any).body || (result as any);
+    const errors = body.singleResult?.errors || body.errors || [];
+
+    if (errors.length > 0) {
+      console.error("GraphQL error:", errors[0].message);
+      // For Apollo Server's single result format, we need to return the full response structure
+      // but with a 500 status code
+      const statusCode = (body as any).http?.status || 500;
+      return new Response(JSON.stringify(result), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("GraphQL error:", error);
-    return Response.json(
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return new Response(
+      JSON.stringify({
+        errors: [{ message: errorMessage }],
+      }),
       {
-        errors: [
-          { message: error instanceof Error ? error.message : "Unknown error" },
-        ],
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       },
-      { status: 400 },
     );
   }
 }
