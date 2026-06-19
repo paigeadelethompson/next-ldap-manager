@@ -16,6 +16,30 @@ import {
 import { getServiceConfig } from "@/lib/services";
 import { graphqlRequest } from "@/lib/graphql/client";
 import { UsersTable } from "@/components/services/openldap/UsersTable";
+import { GroupsTable } from "@/components/services/openldap/GroupsTable";
+import { OusTable } from "@/components/services/openldap/OusTable";
+import { ZonesTable } from "@/components/services/powerdns/ZonesTable";
+import { RecordsTable } from "@/components/services/powerdns/RecordsTable";
+import { ProfilesTable } from "@/components/services/freeradius/ProfilesTable";
+import { NASsTable } from "@/components/services/freeradius/NASsTable";
+import { AttributesTable } from "@/components/services/freeradius/AttributesTable";
+import { ExtensionsTable } from "@/components/services/asterisk/ExtensionsTable";
+import { TrunksTable } from "@/components/services/asterisk/TrunksTable";
+import { VoicemailsTable } from "@/components/services/asterisk/VoicemailsTable";
+import { SipAccountsTable } from "@/components/services/asterisk/SipAccountsTable";
+import { IaxAccountsTable } from "@/components/services/asterisk/IaxAccountsTable";
+import { PrincipalsTable } from "@/components/services/krb5/PrincipalsTable";
+import { RealmsTable } from "@/components/services/krb5/RealmsTable";
+import { PoliciesTable } from "@/components/services/krb5/PoliciesTable";
+import { TemplatesTable } from "@/components/services/netcrave/TemplatesTable";
+import { CertificatesTable } from "@/components/services/netcrave/CertificatesTable";
+import { IcapServicesTable } from "@/components/services/netcrave/IcapServicesTable";
+import { DomainsTable } from "@/components/services/opendkim/DomainsTable";
+import { SelectorsTable } from "@/components/services/opendkim/SelectorsTable";
+import { SigningPoliciesTable } from "@/components/services/opendkim/SigningPoliciesTable";
+import { AliasesTable } from "@/components/services/sendmail/AliasesTable";
+import { MapsTable } from "@/components/services/sendmail/MapsTable";
+import { ClassesTable } from "@/components/services/sendmail/ClassesTable";
 
 type EntryType =
   | "user"
@@ -25,22 +49,28 @@ type EntryType =
   | "zone"
   | "extension"
   | "trunk"
+  | "voicemail"
+  | "sipAccount"
+  | "iaxAccount"
   | "principal"
   | "realm"
+  | "policy"
+  | "profile"
+  | "nas"
+  | "attribute"
+  | "template"
+  | "certificate"
+  | "icapService"
   | "domain"
   | "key"
-  | "alias";
+  | "signingPolicy"
+  | "alias"
+  | "map"
+  | "class";
 
 interface ServiceEntry {
   dn: string;
-  cn?: string;
-  uid?: string;
-  mail?: string;
-  givenName?: string;
-  sn?: string;
-  telephoneNumber?: string;
-  title?: string;
-  ou?: string;
+  [key: string]: unknown;
 }
 
 // GraphQL query for fetching entries
@@ -250,6 +280,78 @@ export default function ServicePage({
       {resolvedParams.service === "openldap" &&
       serviceConfig.entryTypes.includes("user") ? (
         <UsersTable users={entries} loading={loading} error={error} />
+      ) : resolvedParams.service === "openldap" &&
+        serviceConfig.entryTypes.includes("group") ? (
+        <GroupsTable groups={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "openldap" &&
+        serviceConfig.entryTypes.includes("ou") ? (
+        <OusTable ous={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "powerdns" &&
+        serviceConfig.entryTypes.includes("zone") ? (
+        <ZonesTable zones={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "powerdns" &&
+        serviceConfig.entryTypes.includes("record") ? (
+        <RecordsTable records={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "freeradius" &&
+        serviceConfig.entryTypes.includes("profile") ? (
+        <ProfilesTable profiles={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "freeradius" &&
+        serviceConfig.entryTypes.includes("nas") ? (
+        <NASsTable nass={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "freeradius" &&
+        serviceConfig.entryTypes.includes("attribute") ? (
+        <AttributesTable attributes={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "asterisk" &&
+        serviceConfig.entryTypes.includes("extension") ? (
+        <ExtensionsTable extensions={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "asterisk" &&
+        serviceConfig.entryTypes.includes("trunk") ? (
+        <TrunksTable trunks={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "asterisk" &&
+        serviceConfig.entryTypes.includes("voicemail") ? (
+        <VoicemailsTable voicemails={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "asterisk" &&
+        serviceConfig.entryTypes.includes("sipAccount") ? (
+        <SipAccountsTable sipAccounts={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "asterisk" &&
+        serviceConfig.entryTypes.includes("iaxAccount") ? (
+        <IaxAccountsTable iaxAccounts={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "kerberos" &&
+        serviceConfig.entryTypes.includes("principal") ? (
+        <PrincipalsTable principals={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "kerberos" &&
+        serviceConfig.entryTypes.includes("realm") ? (
+        <RealmsTable realms={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "kerberos" &&
+        serviceConfig.entryTypes.includes("policy") ? (
+        <PoliciesTable policies={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "netcrave" &&
+        serviceConfig.entryTypes.includes("template") ? (
+        <TemplatesTable templates={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "netcrave" &&
+        serviceConfig.entryTypes.includes("certificate") ? (
+        <CertificatesTable certificates={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "netcrave" &&
+        serviceConfig.entryTypes.includes("icapService") ? (
+        <IcapServicesTable icapServices={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "opendkim" &&
+        serviceConfig.entryTypes.includes("domain") ? (
+        <DomainsTable domains={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "opendkim" &&
+        serviceConfig.entryTypes.includes("key") ? (
+        <SelectorsTable selectors={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "opendkim" &&
+        serviceConfig.entryTypes.includes("signingPolicy") ? (
+        <SigningPoliciesTable policies={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "sendmail" &&
+        serviceConfig.entryTypes.includes("alias") ? (
+        <AliasesTable aliases={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "sendmail" &&
+        serviceConfig.entryTypes.includes("map") ? (
+        <MapsTable maps={entries as any} loading={loading} error={error} />
+      ) : resolvedParams.service === "sendmail" &&
+        serviceConfig.entryTypes.includes("class") ? (
+        <ClassesTable classes={entries as any} loading={loading} error={error} />
       ) : (
         <Card>
           {loading ? (
