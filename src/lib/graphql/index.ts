@@ -10,6 +10,7 @@ import { typeDefs as netcraveTypeDefs } from "./netcrave";
 import { typeDefs as opendkimTypeDefs } from "./opendkim";
 import { typeDefs as powerdnsTypeDefs } from "./powerdns";
 import { typeDefs as sendmailTypeDefs } from "./sendmail";
+import { queries as openldapQueries } from "./openldap";
 import { mutations as openldapMutations } from "./openldap";
 import { mutations as asteriskMutations } from "./asterisk";
 import { mutations as freeradiusMutations } from "./freeradius";
@@ -47,6 +48,8 @@ export const queries = {
       attributes: args.attributes,
     });
   },
+  // OpenLDAP queries
+  ...openldapQueries,
 };
 
 export const mutations = {

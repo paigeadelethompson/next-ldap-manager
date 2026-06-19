@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/Table";
 import { getServiceConfig } from "@/lib/services";
 import { graphqlRequest } from "@/lib/graphql/client";
+import { UsersTable } from "@/components/services/openldap/UsersTable";
 
 type EntryType =
   | "user"
@@ -32,7 +33,14 @@ type EntryType =
 
 interface ServiceEntry {
   dn: string;
-  attributes: Record<string, unknown>;
+  cn?: string;
+  uid?: string;
+  mail?: string;
+  givenName?: string;
+  sn?: string;
+  telephoneNumber?: string;
+  title?: string;
+  ou?: string;
 }
 
 // GraphQL query for fetching entries
@@ -73,12 +81,30 @@ export default function ServicePage({
         }
 
         const result = await graphqlRequest<{
+          openLdapUsers?: ServiceEntry[];
           ldapEntries?: Array<{
             dn: string;
             attributes: Record<string, unknown>;
           }>;
         }>({
-          query: `
+          query:
+            resolvedParams.service === "openldap"
+              ? `
+            query($baseDN: String, $filter: String) {
+              openLdapUsers(baseDN: $baseDN, filter: $filter) {
+                dn
+                cn
+                uid
+                mail
+                givenName
+                sn
+                telephoneNumber
+                title
+                ou
+              }
+            }
+          `
+              : `
             query($baseDN: String!, $filter: String) {
               ldapEntries(baseDN: $baseDN, filter: $filter, scope: "subtree", attributes: ["*"]) {
                 dn
@@ -86,10 +112,25 @@ export default function ServicePage({
               }
             }
           `,
-          variables: { baseDN, filter },
+          variables:
+            resolvedParams.service === "openldap"
+              ? {
+                  baseDN: process.env.LDAP_BASE_DN || "dc=netcrave,dc=local",
+                  filter: "(objectClass=posixAccount)",
+                }
+              : { baseDN: process.env.LDAP_BASE_DN || "dc=netcrave,dc=local" },
         });
 
-        setEntries(result?.ldapEntries ?? []);
+        // Transform openLdapUsers to ServiceEntry format
+        if (resolvedParams.service === "openldap" && result?.openLdapUsers) {
+          setEntries(result.openLdapUsers);
+        } else if (result?.ldapEntries) {
+          const transformed = result.ldapEntries.map((entry) => ({
+            dn: entry.dn,
+            ...entry.attributes,
+          })) as ServiceEntry[];
+          setEntries(transformed);
+        }
       } catch (err) {
         console.error("Error fetching entries:", err);
         setError(err instanceof Error ? err.message : "Failed to load entries");
@@ -206,20 +247,25 @@ export default function ServicePage({
       </header>
 
       {/* Entries Table */}
-      <Card>
-        {loading ? (
-          <Loading fullScreen text="Loading entries..." />
-        ) : error ? (
-          <div className="card-content">
-            <p className="text-red-600">{error}</p>
-          </div>
-        ) : (
-          renderEntriesTable(
-            entries,
-            getTableColumns(serviceConfig.entryTypes[0]),
-          )
-        )}
-      </Card>
+      {resolvedParams.service === "openldap" &&
+      serviceConfig.entryTypes.includes("user") ? (
+        <UsersTable users={entries} loading={loading} error={error} />
+      ) : (
+        <Card>
+          {loading ? (
+            <Loading fullScreen text="Loading entries..." />
+          ) : error ? (
+            <div className="card-content">
+              <p className="text-red-600">{error}</p>
+            </div>
+          ) : (
+            renderEntriesTable(
+              entries,
+              getTableColumns(serviceConfig.entryTypes[0]),
+            )
+          )}
+        </Card>
+      )}
     </div>
   );
 }

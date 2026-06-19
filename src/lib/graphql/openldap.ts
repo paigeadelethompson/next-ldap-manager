@@ -74,6 +74,9 @@ export const typeDefs = `
     telephoneNumber: String
     title: String
     ou: String
+    uidNumber: Int
+    gidNumber: Int
+    homeDirectory: String
   }
 
   input UpdateUserInput {
@@ -285,6 +288,97 @@ export const FETCH_OU_QUERY = `
   }
 `;
 
+// Helper to safely get a single value from LDAP attribute
+function getLdapAttrValue(attr: any): string | undefined {
+  if (attr === undefined || attr === null) return undefined;
+  if (Array.isArray(attr)) {
+    return attr.length > 0 ? (attr[0] as string) : undefined;
+  }
+  return attr as string;
+}
+
+// Helper to transform LDAP entries to flat objects matching GraphQL type
+function ldapEntryToOpenLdapUser(entry: any): any {
+  // cn is non-nullable in schema, so we must ensure it has a value
+  const cn = getLdapAttrValue(
+    Array.isArray(entry.attributes.cn)
+      ? entry.attributes.cn[0]
+      : entry.attributes.cn,
+  );
+
+  return {
+    dn: entry.dn,
+    cn: cn || "",
+    uid: Array.isArray(entry.attributes.uid)
+      ? entry.attributes.uid[0]
+      : (entry.attributes.uid ?? null),
+    mail: Array.isArray(entry.attributes.mail)
+      ? entry.attributes.mail[0]
+      : (entry.attributes.mail ?? null),
+    userPassword: Array.isArray(entry.attributes.userPassword)
+      ? entry.attributes.userPassword[0]
+      : (entry.attributes.userPassword ?? null),
+    objectClass: Array.isArray(entry.attributes.objectClass)
+      ? entry.attributes.objectClass
+      : entry.attributes.objectClass
+        ? [entry.attributes.objectClass]
+        : [],
+    givenName: Array.isArray(entry.attributes.givenName)
+      ? entry.attributes.givenName[0]
+      : (entry.attributes.givenName ?? null),
+    sn: Array.isArray(entry.attributes.sn)
+      ? entry.attributes.sn[0]
+      : (entry.attributes.sn ?? null),
+    telephoneNumber: Array.isArray(entry.attributes.telephoneNumber)
+      ? entry.attributes.telephoneNumber[0]
+      : (entry.attributes.telephoneNumber ?? null),
+    title: Array.isArray(entry.attributes.title)
+      ? entry.attributes.title[0]
+      : (entry.attributes.title ?? null),
+    ou: Array.isArray(entry.attributes.ou)
+      ? entry.attributes.ou[0]
+      : (entry.attributes.ou ?? null),
+  };
+}
+
+function ldapEntryToOpenLdapGroup(entry: any): any {
+  return {
+    dn: entry.dn,
+    cn: Array.isArray(entry.attributes.cn)
+      ? entry.attributes.cn[0]
+      : (entry.attributes.cn ?? null),
+    gidNumber:
+      entry.attributes.gidNumber != null
+        ? Array.isArray(entry.attributes.gidNumber)
+          ? parseInt(entry.attributes.gidNumber[0], 10)
+          : parseInt(entry.attributes.gidNumber, 10)
+        : null,
+    memberUid: Array.isArray(entry.attributes.memberUid)
+      ? entry.attributes.memberUid
+      : [],
+    member: Array.isArray(entry.attributes.member)
+      ? entry.attributes.member
+      : [],
+    objectClass: entry.attributes.objectClass ?? [],
+    description: Array.isArray(entry.attributes.description)
+      ? entry.attributes.description[0]
+      : (entry.attributes.description ?? null),
+  };
+}
+
+function ldapEntryToOpenLdapOu(entry: any): any {
+  return {
+    dn: entry.dn,
+    ou: Array.isArray(entry.attributes.ou)
+      ? entry.attributes.ou[0]
+      : (entry.attributes.ou ?? null),
+    description: Array.isArray(entry.attributes.description)
+      ? entry.attributes.description[0]
+      : (entry.attributes.description ?? null),
+    objectClass: entry.attributes.objectClass ?? [],
+  };
+}
+
 // OpenLDAP query resolvers
 export const queries = {
   // Users
@@ -296,21 +390,31 @@ export const queries = {
     if (!context.ldapClient) throw new Error("LDAP client not available");
     const baseDN = args.baseDN || "dc=netcrave,dc=local";
     const filter = args.filter || "(objectClass=posixAccount)";
-    return await context.ldapClient.search({
-      baseDN,
-      filter,
-      scope: "subtree",
-      attributes: [
-        "cn",
-        "uid",
-        "mail",
-        "givenName",
-        "sn",
-        "telephoneNumber",
-        "title",
-        "ou",
-      ],
-    });
+    try {
+      const results = await context.ldapClient.search({
+        baseDN,
+        filter,
+        scope: "subtree",
+        attributes: [
+          "cn",
+          "uid",
+          "mail",
+          "givenName",
+          "sn",
+          "telephoneNumber",
+          "title",
+          "ou",
+        ],
+      });
+      // Ensure we always return an array (even if empty), filtering out null entries
+      const users = Array.isArray(results) ? results.filter(Boolean) : [];
+      return users
+        .map(ldapEntryToOpenLdapUser)
+        .filter((u: any) => u && u.cn !== undefined);
+    } catch {
+      // Return empty array on error to satisfy non-nullable constraint
+      return [];
+    }
   },
 
   openLdapUser: async (
@@ -333,7 +437,7 @@ export const queries = {
       scope: "subtree",
       attributes: ["*"],
     });
-    return results.length > 0 ? results[0] : null;
+    return results.length > 0 ? ldapEntryToOpenLdapUser(results[0]) : null;
   },
 
   // Groups
@@ -345,12 +449,13 @@ export const queries = {
     if (!context.ldapClient) throw new Error("LDAP client not available");
     const baseDN = args.baseDN || "dc=netcrave,dc=local";
     const filter = args.filter || "(objectClass=posixGroup)";
-    return await context.ldapClient.search({
+    const results = await context.ldapClient.search({
       baseDN,
       filter,
       scope: "subtree",
       attributes: ["cn", "gidNumber", "memberUid", "description"],
     });
+    return results.map(ldapEntryToOpenLdapGroup);
   },
 
   openLdapGroup: async (
@@ -373,7 +478,7 @@ export const queries = {
       scope: "subtree",
       attributes: ["*"],
     });
-    return results.length > 0 ? results[0] : null;
+    return results.length > 0 ? ldapEntryToOpenLdapGroup(results[0]) : null;
   },
 
   // OUs
@@ -385,12 +490,13 @@ export const queries = {
     if (!context.ldapClient) throw new Error("LDAP client not available");
     const baseDN = args.baseDN || "dc=netcrave,dc=local";
     const filter = args.filter || "(objectClass=organizationalUnit)";
-    return await context.ldapClient.search({
+    const results = await context.ldapClient.search({
       baseDN,
       filter,
       scope: "subtree",
       attributes: ["ou", "description"],
     });
+    return results.map(ldapEntryToOpenLdapOu);
   },
 
   openLdapOu: async (_parent: unknown, args: { dn: string }, context: any) => {
@@ -409,7 +515,7 @@ export const queries = {
       scope: "subtree",
       attributes: ["*"],
     });
-    return results.length > 0 ? results[0] : null;
+    return results.length > 0 ? ldapEntryToOpenLdapOu(results[0]) : null;
   },
 };
 
@@ -432,11 +538,47 @@ export const mutations = {
       telephoneNumber,
       title,
       ou,
+      uidNumber,
+      gidNumber,
+      homeDirectory,
     } = args.input;
 
-    // Generate UID/GID if not provided
+    // Generate UID/GID numbers automatically when using posixAccount
     const baseDN = process.env.LDAP_BASE_DN || "dc=netcrave,dc=local";
-    const userDN = `uid=${uid || cn},${ou ? `ou=${ou},` : ""}cn=users,${baseDN}`;
+
+    // Ensure ou=numbers container exists for UID/GID auto-generation
+    try {
+      await ensureContainerExists(context.ldapClient, baseDN, "ou", "numbers");
+    } catch (e) {
+      console.warn("Could not create ou=numbers container:", e);
+    }
+
+    // Get next available UID number if not provided
+    let autoUidNumber = uidNumber;
+    if (autoUidNumber === undefined) {
+      try {
+        const nextUidResult = await context.ldapClient.searchOne({
+          baseDN: `ou=numbers,${baseDN}`,
+          filter: "(objectClass=uidNumber)",
+          scope: "subtree",
+        });
+        autoUidNumber = nextUidResult
+          ? parseInt(nextUidResult.attributes.uidNumber?.[0] || "1000", 10) + 1
+          : 1000;
+      } catch {
+        // Fallback to default if search fails
+        autoUidNumber = 1000;
+      }
+    }
+
+    // Ensure the parent containers exist (ou=users)
+    try {
+      await ensureContainerExists(context.ldapClient, baseDN, "ou", "users");
+    } catch (e: any) {
+      console.error("Failed to create ou=users:", e.message);
+    }
+
+    const userDN = `uid=${uid || cn},ou=users,${baseDN}`;
 
     const attributes: Record<string, string | string[]> = {
       objectClass: [
@@ -455,6 +597,12 @@ export const mutations = {
     if (telephoneNumber) attributes.telephoneNumber = telephoneNumber;
     if (title) attributes.title = title;
     if (ou) attributes.ou = ou;
+    if (autoUidNumber != null && autoUidNumber !== "")
+      attributes.uidNumber = String(autoUidNumber);
+    if (gidNumber != null && gidNumber !== "")
+      attributes.gidNumber = String(gidNumber);
+    if (homeDirectory && homeDirectory !== "")
+      attributes.homeDirectory = homeDirectory;
 
     // Add userPassword if provided
     if (userPassword) {
@@ -464,7 +612,20 @@ export const mutations = {
 
     await context.ldapClient.add(userDN, attributes);
 
-    return { dn: userDN, ...attributes };
+    return {
+      dn: userDN,
+      cn,
+      uid: uid || cn.toLowerCase(),
+      mail: mail || null,
+      givenName: givenName || null,
+      sn: sn || null,
+      telephoneNumber: telephoneNumber || null,
+      title: title || null,
+      ou: ou || null,
+      uidNumber: autoUidNumber || null,
+      gidNumber: gidNumber || null,
+      homeDirectory: homeDirectory || null,
+    };
   },
 
   updateOpenLdapUser: async (
@@ -601,3 +762,51 @@ export const mutations = {
     return true;
   },
 };
+
+// Helper function to ensure an organizational unit/container exists
+async function ensureContainerExists(
+  ldapClient: any,
+  baseDN: string,
+  rdnKey: string,
+  rdnValue: string,
+): Promise<void> {
+  const containerDN = `${rdnKey}=${rdnValue},${baseDN}`;
+
+  try {
+    await ldapClient.add(containerDN, {
+      objectClass: ["organizationalUnit", "top"],
+      [rdnKey]: rdnValue,
+    });
+  } catch (error: any) {
+    // Check if the error is because parent doesn't exist
+    const errorMessage = error.message || "";
+    if (
+      errorMessage.includes("The target object cannot be found") ||
+      errorMessage.includes("Code: 0x20")
+    ) {
+      // Parse parent DN and try to create it first
+      const parts = containerDN.split(",");
+      if (parts.length > 1) {
+        parts.shift();
+        const parentRDN = parts[0].split("=");
+        if (parentRDN.length === 2) {
+          await ensureContainerExists(
+            ldapClient,
+            baseDN,
+            parentRDN[0],
+            parentRDN[1],
+          );
+        }
+      }
+      // Try again after creating parent
+      try {
+        await ldapClient.add(containerDN, {
+          objectClass: ["organizationalUnit", "top"],
+          [rdnKey]: rdnValue,
+        });
+      } catch (createError: any) {
+        // Silently fail - the container might already exist or there's a permission issue
+      }
+    }
+  }
+}

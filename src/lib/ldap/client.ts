@@ -1,5 +1,6 @@
 import { Client, Change } from "ldapts";
 import { LdapConfig, EntryFilter } from "@/lib/types";
+import { GraphQLError } from "graphql";
 
 type LdapScope = "base" | "onelevel" | "subtree";
 
@@ -65,18 +66,50 @@ export class LDAPClient {
     const client = await this.connect();
 
     try {
-      const entries = await client.search(filter.baseDN, {
+      const result = await client.search(filter.baseDN, {
         filter: filter.filter,
         scope: mapScope((filter.scope as LdapScope) || "subtree"),
         attributes: filter.attributes || ["*"],
       });
 
-      return entries as unknown as SearchResult<T>[];
+      // ldapts returns SearchResult with searchEntries property
+      const entries = (result as any).searchEntries || result.entries || [];
+
+      // Ensure we always return an array
+      if (!entries || !Array.isArray(entries)) {
+        console.warn("LDAP search returned non-array result:", entries);
+        return [];
+      }
+
+      // Use toObject() if available, otherwise parse attributes manually
+      const requestedAttrs = filter.attributes || ["*"];
+      return entries.map((entry: any) => {
+        let attrs: Record<string, unknown>;
+
+        if (typeof entry.toObject === "function") {
+          attrs = entry.toObject(requestedAttrs, []);
+        } else {
+          // Fallback: manually extract from attributes array
+          attrs = {};
+          for (const attr of entry.attributes || []) {
+            if (attr.type && attr.values) {
+              attrs[attr.type] =
+                attr.values.length === 1 ? attr.values[0] : attr.values;
+            }
+          }
+        }
+
+        return {
+          dn: entry.name || entry.dn,
+          attributes: attrs,
+        };
+      }) as SearchResult<T>[];
     } catch (error) {
       console.error("LDAP search error:", error);
-      throw new Error(
-        `Search failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      const message = error instanceof Error ? error.message : "Unknown error";
+      throw new GraphQLError(message, {
+        extensions: { http: { status: 500 } },
+      });
     }
   }
 

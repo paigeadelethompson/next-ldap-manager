@@ -51,7 +51,8 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("GraphQL error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return new Response(
       JSON.stringify({
         errors: [{ message: errorMessage }],
